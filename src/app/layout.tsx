@@ -25,10 +25,10 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: {
-    default: "LUNA BOUTIQUE | Estilo Atemporal",
+    default: "LUNA BOUTIQUE | Alta Moda & Estilo Atemporal",
     template: "%s | LUNA BOUTIQUE"
   },
-  description: "Descubre la curaduría exclusiva de LUNA BOUTIQUE. Moda unisex de alta gama diseñada para elevar lo cotidiano a lo extraordinario.",
+  description: "Curaduría exclusiva de moda unisex diseñada para elevar lo cotidiano a lo extraordinario. Minimalismo refinado y elegancia lunar.",
   keywords: ["boutique", "moda premium", "lujo accesible", "luna boutique", "moda unisex"],
   authors: [{ name: "LUNA Team" }],
   openGraph: {
@@ -36,21 +36,21 @@ export const metadata: Metadata = {
     locale: "es_CL",
     url: "https://lunaboutique.store",
     siteName: "LUNA BOUTIQUE",
-    title: "LUNA BOUTIQUE | Estilo Atemporal",
-    description: "Eleva lo cotidiano con nuestra selección exclusiva.",
+    title: "LUNA BOUTIQUE | Alta Moda & Estilo Atemporal",
+    description: "Eleva lo cotidiano con nuestra selección exclusiva de alta moda.",
     images: [
       {
         url: "https://images.unsplash.com/photo-1490481658327-477282130772?q=80&w=1200",
         width: 1200,
         height: 630,
-        alt: "LUNA Hero Image",
+        alt: "LUNA Boutique Collection",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "LUNA BOUTIQUE | Estilo Atemporal",
-    description: "Eleva lo cotidiano con nuestra selección exclusiva.",
+    title: "LUNA BOUTIQUE | Alta Moda & Estilo Atemporal",
+    description: "Eleva lo cotidiano con nuestra selección exclusiva de alta moda.",
     images: ["https://images.unsplash.com/photo-1490481658327-477282130772?q=80&w=1200"],
   },
   robots: {
