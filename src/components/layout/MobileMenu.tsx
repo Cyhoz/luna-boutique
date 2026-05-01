@@ -48,7 +48,7 @@ export function MobileMenu({ isOpen, onClose, isAdmin }: MobileMenuProps) {
             animate={{ x: 0 }}
             exit={{ x: '-100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed inset-y-0 left-0 z-[70] w-[85%] max-w-sm bg-background p-10 shadow-3xl lg:hidden flex flex-col"
+            className="fixed inset-y-0 left-0 z-[100] w-full sm:w-[85%] max-w-sm bg-white dark:bg-[#020617] p-10 shadow-3xl lg:hidden flex flex-col border-r border-primary/5"
           >
             <div className="flex items-center justify-between mb-16">
               <div className="flex items-center gap-2">

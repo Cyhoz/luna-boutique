@@ -32,7 +32,7 @@ export default async function HomePage() {
       {/* HERO SECTION - Sophisticated & Ethereal */}
       <section className="relative h-[90vh] w-full overflow-hidden">
         <Image
-          src="https://images.unsplash.com/photo-1490481658327-477282130772?q=80&w=2000&auto=format&fit=crop"
+          src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=2000&auto=format&fit=crop"
           alt="Luna Boutique Hero"
           fill
           priority

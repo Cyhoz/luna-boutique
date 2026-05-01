@@ -16,7 +16,7 @@ export function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const searchInputRef = useRef<HTMLInputElement>(null)
-  
+
   const supabase = createClient()
 
   useEffect(() => {
@@ -30,7 +30,7 @@ export function Navbar() {
           .select('role')
           .eq('id', user.id)
           .single()
-        
+
         setIsAdmin(profile?.role === 'admin')
       } else {
         setIsAdmin(false)
@@ -62,11 +62,11 @@ export function Navbar() {
     <nav className="sticky top-0 z-50 w-full border-b border-zinc-200/50 bg-white/80 backdrop-blur-xl dark:border-zinc-800/50 dark:bg-zinc-950/80 transition-all duration-300">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
-          
+
           {/* Left: Mobile Menu Toggle & Logo */}
           <div className="flex items-center gap-12">
-            <button 
-              type="button" 
+            <button
+              type="button"
               onClick={() => setIsMobileMenuOpen(true)}
               className="p-2 -ml-2 mr-2 md:hidden text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50 transition-colors"
             >
@@ -88,7 +88,7 @@ export function Navbar() {
                 Novedades
               </Link>
               <Link href="/ofertas" className="text-[11px] font-sans font-bold uppercase tracking-[0.2em] text-red-400 hover:text-red-500 transition-colors">
-                Archivo
+                Ofertas
               </Link>
               {isAdmin && (
                 <Link href="/admin" className="text-[11px] font-sans font-bold uppercase tracking-[0.2em] text-amber-500 hover:text-amber-600 transition-colors flex items-center gap-1.5">
@@ -120,7 +120,7 @@ export function Navbar() {
                   </motion.div>
                 )}
               </AnimatePresence>
-              <button 
+              <button
                 onClick={() => setIsSearchOpen(!isSearchOpen)}
                 className="p-2 relative z-10 text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50 transition-colors"
               >
@@ -137,7 +137,7 @@ export function Navbar() {
               <span className="sr-only">Cuenta</span>
             </Link>
 
-            <button 
+            <button
               onClick={toggleCart}
               className="p-2 relative group text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50 transition-colors"
             >
@@ -154,9 +154,9 @@ export function Navbar() {
       </div>
 
       {/* Mobile Menu Component */}
-      <MobileMenu 
-        isOpen={isMobileMenuOpen} 
-        onClose={() => setIsMobileMenuOpen(false)} 
+      <MobileMenu
+        isOpen={isMobileMenuOpen}
+        onClose={() => setIsMobileMenuOpen(false)}
         isAdmin={isAdmin}
       />
     </nav>
