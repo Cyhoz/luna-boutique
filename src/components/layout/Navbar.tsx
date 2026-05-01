@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { ShoppingBag, Search, Menu, User, ShieldCheck, X } from 'lucide-react'
+import { ShoppingBag, Search, Menu, User, ShieldCheck, X, Moon } from 'lucide-react'
 import { useCartStore } from '@/store/cartStore'
 import { useEffect, useState, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
