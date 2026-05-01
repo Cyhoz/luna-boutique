@@ -44,7 +44,14 @@ export async function updateSession(request: NextRequest) {
       .single()
 
     if (!profile || profile.role !== 'admin') {
-      // Es un usuario normal (customer), lo enviamos al home
+      // Registrar intento no autorizado
+      await supabase.from('security_logs').insert({
+        event_type: 'unauthorized_admin_access',
+        user_id: user.id,
+        ip_address: request.headers.get('x-forwarded-for') || 'unknown',
+        details: { path: request.nextUrl.pathname }
+      })
+      
       return NextResponse.redirect(new URL('/', request.url))
     }
   }
