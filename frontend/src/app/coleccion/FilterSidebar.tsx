@@ -39,15 +39,15 @@ export function FilterSidebar({ categorias = [], tallas = [] }: { categorias?: s
   const hasFilters = currentCategory || currentSize || currentPrice || currentStock
 
   return (
-    <div className="w-full lg:w-64 flex-shrink-0 bg-white dark:bg-[#0f172a] p-8 rounded-[2.5rem] border border-zinc-100 dark:border-zinc-800 shadow-sm">
-      <div className="flex items-center justify-between mb-10 pb-6 border-b border-zinc-100 dark:border-zinc-800">
-        <h2 className="text-[11px] font-sans font-black uppercase tracking-[0.3em] flex items-center gap-2 text-primary">
-          <Sparkles className="w-4 h-4 text-accent" /> Filtros
+    <div className="w-full lg:w-64 flex-shrink-0 glass p-8 rounded-[3rem] border border-white/5 shadow-2xl">
+      <div className="flex items-center justify-between mb-10 pb-6 border-b border-white/5">
+        <h2 className="text-[11px] font-sans font-black uppercase tracking-[0.3em] flex items-center gap-2 text-white">
+          <Sparkles className="w-4 h-4 text-[#eab308]" /> Filtros
         </h2>
         {hasFilters && (
           <button 
             onClick={clearFilters}
-            className="text-[10px] font-bold text-muted-foreground hover:text-primary uppercase tracking-widest flex items-center gap-1 transition-colors"
+            className="text-[10px] font-bold text-zinc-500 hover:text-white uppercase tracking-widest flex items-center gap-1 transition-colors"
           >
             <X className="w-3 h-3" /> Limpiar
           </button>
@@ -58,7 +58,7 @@ export function FilterSidebar({ categorias = [], tallas = [] }: { categorias?: s
         {/* Categorías */}
         {categorias.length > 0 && (
           <div>
-            <h3 className="text-[10px] font-sans font-black uppercase tracking-[0.2em] text-muted-foreground mb-8">Categoría</h3>
+            <h3 className="text-[10px] font-sans font-black uppercase tracking-[0.2em] text-zinc-600 mb-8">Categoría</h3>
             <ul className="space-y-5">
               {categorias.map((cat) => (
                 <li key={cat}>
@@ -66,12 +66,12 @@ export function FilterSidebar({ categorias = [], tallas = [] }: { categorias?: s
                     onClick={() => handleFilter('categoria', cat)}
                     className={`flex items-center justify-between w-full text-[11px] font-bold uppercase tracking-widest transition-all ${
                       currentCategory === cat 
-                        ? 'text-primary translate-x-1' 
-                        : 'text-muted-foreground hover:text-primary'
+                        ? 'text-white translate-x-1' 
+                        : 'text-zinc-500 hover:text-white'
                     }`}
                   >
                     {cat}
-                    {currentCategory === cat && <div className="w-1.5 h-1.5 bg-accent rounded-full" />}
+                    {currentCategory === cat && <div className="w-1.5 h-1.5 bg-[#db2777] rounded-full pink-glow" />}
                   </button>
                 </li>
               ))}
@@ -82,16 +82,16 @@ export function FilterSidebar({ categorias = [], tallas = [] }: { categorias?: s
         {/* Tallas */}
         {tallas.length > 0 && (
           <div>
-            <h3 className="text-[10px] font-sans font-black uppercase tracking-[0.2em] text-muted-foreground mb-8">Talla</h3>
+            <h3 className="text-[10px] font-sans font-black uppercase tracking-[0.2em] text-zinc-600 mb-8">Talla</h3>
             <div className="grid grid-cols-4 gap-2">
               {tallas.map((size) => (
                 <button
                   key={size}
                   onClick={() => handleFilter('talla', size)}
-                  className={`h-11 rounded-full text-[10px] font-black border transition-all ${
+                  className={`h-11 rounded-xl text-[10px] font-black border transition-all ${
                     currentSize === size
-                      ? 'bg-primary text-primary-foreground border-primary'
-                      : 'bg-transparent border-zinc-100 dark:border-zinc-800 text-muted-foreground hover:border-accent'
+                      ? 'bg-white text-black border-white shadow-lg'
+                      : 'bg-white/5 border-white/10 text-zinc-500 hover:text-white hover:border-white/30'
                   }`}
                 >
                   {size}
@@ -103,7 +103,7 @@ export function FilterSidebar({ categorias = [], tallas = [] }: { categorias?: s
 
         {/* Rango de Precio */}
         <div>
-          <h3 className="text-[10px] font-sans font-black uppercase tracking-[0.2em] text-muted-foreground mb-8">Presupuesto</h3>
+          <h3 className="text-[10px] font-sans font-black uppercase tracking-[0.2em] text-zinc-600 mb-8">Presupuesto</h3>
           <ul className="space-y-5">
             {[50, 100, 200, 500].map((price) => (
               <li key={price}>
@@ -111,14 +111,14 @@ export function FilterSidebar({ categorias = [], tallas = [] }: { categorias?: s
                   onClick={() => handleFilter('precio', price.toString())}
                   className={`flex items-center gap-3 text-[11px] font-bold uppercase tracking-widest transition-all ${
                     currentPrice === price.toString() 
-                      ? 'text-primary' 
-                      : 'text-muted-foreground hover:text-primary'
+                      ? 'text-white' 
+                      : 'text-zinc-500 hover:text-white'
                   }`}
                 >
                   <div className={`w-4 h-4 rounded-full border flex items-center justify-center transition-colors ${
-                    currentPrice === price.toString() ? 'border-accent bg-accent/10' : 'border-zinc-200 dark:border-zinc-700'
+                    currentPrice === price.toString() ? 'border-[#eab308] bg-[#eab308]/10' : 'border-white/10'
                   }`}>
-                    {currentPrice === price.toString() && <div className="w-1.5 h-1.5 bg-accent rounded-full" />}
+                    {currentPrice === price.toString() && <div className="w-1.5 h-1.5 bg-[#eab308] rounded-full" />}
                   </div>
                   Hasta ${price}
                 </button>
@@ -130,12 +130,12 @@ export function FilterSidebar({ categorias = [], tallas = [] }: { categorias?: s
         {/* Disponibilidad */}
         <div>
           <label className="flex items-center justify-between cursor-pointer group">
-            <span className="text-[10px] font-sans font-black uppercase tracking-[0.2em] text-muted-foreground">En Stock</span>
+            <span className="text-[10px] font-sans font-black uppercase tracking-[0.2em] text-zinc-600">En Stock</span>
             <div 
               onClick={() => handleFilter('stock', 'true')}
-              className={`w-11 h-6 rounded-full transition-colors relative flex items-center px-1 ${currentStock === 'true' ? 'bg-primary' : 'bg-secondary'}`}
+              className={`w-11 h-6 rounded-full transition-colors relative flex items-center px-1 border ${currentStock === 'true' ? 'bg-[#eab308] border-[#eab308]' : 'bg-white/5 border-white/10'}`}
             >
-              <div className={`w-4 h-4 bg-white rounded-full transition-transform shadow-sm ${currentStock === 'true' ? 'translate-x-5' : 'translate-x-0'}`} />
+              <div className={`w-4 h-4 rounded-full transition-transform shadow-sm ${currentStock === 'true' ? 'translate-x-5 bg-black' : 'translate-x-0 bg-zinc-500'}`} />
             </div>
           </label>
         </div>

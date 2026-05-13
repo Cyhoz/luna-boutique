@@ -139,49 +139,49 @@ export default async function AdminPage({
 
         {/* Dashboard Summary Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
-          <div className="glass rounded-[2.5rem] p-8 border-white/5 shadow-xl group hover:border-white/10 transition-all">
+          <a href="#inventario-maestro" className="block glass rounded-[2.5rem] p-8 border-white/5 shadow-xl group hover:border-white/10 transition-all hover:scale-105 cursor-pointer">
             <div className="flex items-center justify-between mb-6">
-              <div className="w-12 h-12 glass rounded-2xl flex items-center justify-center text-blue-400 border-white/5">
+              <div className="w-12 h-12 glass rounded-2xl flex items-center justify-center text-blue-400 border-white/5 group-hover:bg-blue-500/10 transition-colors">
                 <Package className="h-6 w-6" />
               </div>
               <span className="text-[9px] font-black text-zinc-600 uppercase tracking-[0.3em]">Catálogo</span>
             </div>
             <p className="text-4xl font-serif text-white tracking-tighter">{totalProducts}</p>
             <p className="text-[9px] text-zinc-500 mt-2 uppercase font-bold tracking-widest">Piezas activas en galería</p>
-          </div>
+          </a>
 
-          <div className={`glass rounded-[2.5rem] p-8 border-white/5 shadow-xl transition-all ${lowStockAlerts > 0 ? 'ring-1 ring-red-500/30' : ''}`}>
+          <a href="#alertas-stock" className={`block glass rounded-[2.5rem] p-8 border-white/5 shadow-xl transition-all hover:scale-105 cursor-pointer ${lowStockAlerts > 0 ? 'ring-1 ring-red-500/30' : ''}`}>
             <div className="flex items-center justify-between mb-6">
-              <div className={`w-12 h-12 glass rounded-2xl flex items-center justify-center border-white/5 ${lowStockAlerts > 0 ? 'text-red-500 animate-pulse' : 'text-zinc-500'}`}>
+              <div className={`w-12 h-12 glass rounded-2xl flex items-center justify-center border-white/5 transition-colors ${lowStockAlerts > 0 ? 'text-red-500 animate-pulse hover:bg-red-500/10' : 'text-zinc-500 hover:bg-white/10'}`}>
                 <AlertTriangle className="h-6 w-6" />
               </div>
               <span className="text-[9px] font-black text-zinc-600 uppercase tracking-[0.3em]">Existencias</span>
             </div>
             <p className={`text-4xl font-serif tracking-tighter ${lowStockAlerts > 0 ? 'text-red-500' : 'text-white'}`}>{lowStockAlerts}</p>
             <p className="text-[9px] text-zinc-500 mt-2 uppercase font-bold tracking-widest">Alertas de stock bajo</p>
-          </div>
+          </a>
 
-          <div className="glass rounded-[2.5rem] p-8 border-white/5 shadow-xl">
+          <a href="#logistica" className="block glass rounded-[2.5rem] p-8 border-white/5 shadow-xl hover:scale-105 transition-all cursor-pointer group">
             <div className="flex items-center justify-between mb-6">
-              <div className="w-12 h-12 glass rounded-2xl flex items-center justify-center text-[#eab308] border-white/5">
+              <div className="w-12 h-12 glass rounded-2xl flex items-center justify-center text-[#eab308] border-white/5 group-hover:bg-[#eab308]/10 transition-colors">
                 <Clock className="h-6 w-6" />
               </div>
               <span className="text-[9px] font-black text-zinc-600 uppercase tracking-[0.3em]">Logística</span>
             </div>
             <p className="text-4xl font-serif text-white tracking-tighter">{pendingShipments}</p>
             <p className="text-[9px] text-zinc-500 mt-2 uppercase font-bold tracking-widest">Órdenes pendientes</p>
-          </div>
+          </a>
 
-          <div className="glass rounded-[2.5rem] p-8 border-white/5 shadow-xl">
+          <a href="#logistica" className="block glass rounded-[2.5rem] p-8 border-white/5 shadow-xl hover:scale-105 transition-all cursor-pointer group">
             <div className="flex items-center justify-between mb-6">
-              <div className="w-12 h-12 glass rounded-2xl flex items-center justify-center text-emerald-400 border-white/5">
+              <div className="w-12 h-12 glass rounded-2xl flex items-center justify-center text-emerald-400 border-white/5 group-hover:bg-emerald-500/10 transition-colors">
                 <CheckCircle className="h-6 w-6" />
               </div>
               <span className="text-[9px] font-black text-zinc-600 uppercase tracking-[0.3em]">Cierre</span>
             </div>
             <p className="text-4xl font-serif text-white tracking-tighter">{completedToday}</p>
             <p className="text-[9px] text-zinc-500 mt-2 uppercase font-bold tracking-widest">Completados hoy</p>
-          </div>
+          </a>
         </div>
 
         <div className="grid lg:grid-cols-12 gap-12">
@@ -294,7 +294,7 @@ export default async function AdminPage({
           <div className="lg:col-span-7 space-y-12">
             
             {/* Active Orders - Logistics */}
-            <div className="glass rounded-[3.5rem] border-white/5 shadow-2xl overflow-hidden">
+            <div id="logistica" className="glass rounded-[3.5rem] border-white/5 shadow-2xl overflow-hidden scroll-mt-32">
               <div className="px-10 py-8 border-b border-white/5 flex items-center justify-between">
                 <div className="flex items-center gap-4">
                   <div className="w-10 h-10 glass rounded-xl flex items-center justify-center text-[#db2777] border-white/10">
@@ -419,10 +419,12 @@ export default async function AdminPage({
 
             {/* Inventory Monitoring - Right Column */}
             <div className="space-y-16">
-              <StockAlerts />
+              <div id="alertas-stock" className="scroll-mt-32">
+                <StockAlerts />
+              </div>
               <InventoryHistory />
 
-              <div className="space-y-8">
+              <div id="inventario-maestro" className="space-y-8 scroll-mt-32">
                 <div className="flex items-center justify-between">
                   <h2 className="text-2xl font-serif font-medium text-white italic">Inventario Maestro</h2>
                   <div className="flex items-center gap-4">

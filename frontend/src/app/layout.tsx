@@ -83,12 +83,11 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {/* Fondo Celestial Global */}
-          <div className="fixed inset-0 -z-10 bg-[#0f051d]" />
-          <div className="fixed inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,_#4c1d95_0%,_transparent_50%)] opacity-40" />
-          <div className="fixed inset-0 -z-10 bg-[radial-gradient(circle_at_80%_20%,_#db2777_0%,_transparent_40%)] opacity-20" />
-          <div className="fixed inset-0 -z-10 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-20 mix-blend-screen animate-twinkle" />
-
+          {/* Fondo Extraído de la Imagen (Morado a Rosa, CERO NEGRO) */}
+          <div className="magical-bg-animated" />
+          <div className="studio-bg" />
+          {/* Estrellas brillantes */}
+          <div className="fixed inset-0 -z-10 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-40 pointer-events-none mix-blend-screen animate-twinkle" />
 
           <Navbar />
           <CartDrawer />

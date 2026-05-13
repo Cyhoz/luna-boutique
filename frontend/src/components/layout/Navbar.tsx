@@ -97,7 +97,7 @@ export function Navbar() {
                 <Link href="/novedades" className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-500 hover:text-white transition-all">
                   Firmamento
                 </Link>
-                {isAdmin && (
+                {mounted && isAdmin && (
                   <Link href="/admin" className="text-[10px] font-black uppercase tracking-[0.3em] text-[#eab308] hover:scale-105 transition-all flex items-center gap-2">
                     <ShieldCheck className="h-3.5 w-3.5" /> Command
                   </Link>
@@ -108,32 +108,7 @@ export function Navbar() {
             {/* Right: Actions */}
             <div className="flex items-center gap-2 sm:gap-6">
               
-              {/* Search */}
-              <div className="relative flex items-center">
-                <AnimatePresence>
-                  {isSearchOpen && (
-                    <motion.div
-                      initial={{ width: 0, opacity: 0 }}
-                      animate={{ width: 280, opacity: 1 }}
-                      exit={{ width: 0, opacity: 0 }}
-                      className="absolute right-0 top-1/2 -translate-y-1/2 overflow-hidden hidden lg:block"
-                    >
-                      <input
-                        ref={searchInputRef}
-                        type="text"
-                        placeholder="BUSCAR EN EL UNIVERSO..."
-                        className="w-full glass bg-white/5 border-white/10 rounded-full py-2.5 pl-5 pr-12 text-[10px] font-black tracking-widest text-white outline-none placeholder:text-zinc-700"
-                      />
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-                <button
-                  onClick={() => setIsSearchOpen(!isSearchOpen)}
-                  className="p-3 glass rounded-full border-white/5 text-zinc-500 hover:text-white transition-all"
-                >
-                  {isSearchOpen ? <X className="h-4 w-4" /> : <Search className="h-4 w-4" />}
-                </button>
-              </div>
+
 
               {/* Account */}
               {/* Account */}

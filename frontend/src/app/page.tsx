@@ -60,30 +60,26 @@ export default async function HomePage() {
   return (
     <div className="flex flex-col gap-y-32 pb-32 relative isolate min-h-screen lunar-gradient overflow-hidden">
       
-      {/* BACKGROUND DECORATIONS */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[1000px] bg-[radial-gradient(circle_at_center,_rgba(59,7,100,0.15)_0%,_transparent_70%)] pointer-events-none" />
-      <div className="absolute top-[20%] -right-20 w-[600px] h-[600px] bg-[#db2777]/5 blur-[120px] rounded-full animate-pulse-slow pointer-events-none" />
-
-      {/* HERO SECTION - Ethereal & Galactic Luxury */}
+      {/* HERO SECTION - Minimalist Luxury */}
       <section className="relative h-screen w-full flex items-center justify-center pt-20">
         <div className="container relative z-10 mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex flex-col items-center space-y-12">
             <div className="flex items-center gap-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
-              <span className="h-[1px] w-12 bg-gradient-to-r from-transparent to-[#eab308]/40" />
+              <span className="h-[1px] w-12 bg-gradient-to-r from-transparent to-[#f6ca56]/80" />
               <div className="flex items-center gap-2">
-                <Stars className="h-4 w-4 text-[#eab308] animate-twinkle" />
-                <span className="text-[10px] font-sans font-black uppercase tracking-[0.6em] text-[#eab308]">
-                  Haute Couture Nocturne
+                <Stars className="h-4 w-4 text-[#f6ca56] animate-twinkle drop-shadow-[0_0_10px_rgba(246,202,86,1)]" />
+                <span className="text-[10px] font-sans font-black uppercase tracking-[0.6em] text-[#f6ca56] drop-shadow-md">
+                  Venta de Ropa & Confección
                 </span>
               </div>
-              <span className="h-[1px] w-12 bg-gradient-to-l from-transparent to-[#eab308]/40" />
+              <span className="h-[1px] w-12 bg-gradient-to-l from-transparent to-[#f6ca56]/80" />
             </div>
             
             <div className="relative animate-in fade-in zoom-in-95 duration-1000 delay-200">
-              <h1 className="text-8xl font-serif font-medium leading-none tracking-tighter text-white sm:text-[12rem] md:text-[16rem] select-none opacity-90">
+              <h1 className="text-8xl font-serif font-light leading-none tracking-tighter text-white sm:text-[12rem] md:text-[16rem] select-none opacity-90 drop-shadow-2xl">
                 LUNA
               </h1>
-              <span className="absolute -bottom-6 right-0 text-4xl font-serif italic text-[#db2777] sm:text-7xl md:text-9xl pink-glow drop-shadow-2xl">
+              <span className="absolute -bottom-6 right-0 text-4xl font-serif italic text-[#e52b82] sm:text-7xl md:text-9xl drop-shadow-[0_0_15px_rgba(229,43,130,0.6)]">
                 Boutique
               </span>
             </div>
@@ -96,14 +92,14 @@ export default async function HomePage() {
             <div className="flex flex-col gap-6 sm:flex-row pt-8 animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-700">
               <Link
                 href="/coleccion"
-                className="group relative flex h-20 items-center justify-center gap-4 rounded-full bg-[#db2777] px-12 text-[12px] font-black uppercase tracking-[0.3em] text-white shadow-[0_0_40px_rgba(219,39,119,0.3)] transition-all hover:scale-105 hover:bg-pink-600"
+                className="group relative flex h-20 items-center justify-center gap-4 rounded-full bg-[#e52b82] px-12 text-[12px] font-black uppercase tracking-[0.3em] text-white shadow-[0_0_30px_rgba(229,43,130,0.6)] transition-all hover:scale-[1.05] hover:bg-[#d11a6f]"
               >
-                Explorar la Noche
+                Explorar la Colección
                 <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-2" />
               </Link>
               <Link
                 href="/novedades"
-                className="flex h-20 items-center justify-center rounded-full border border-white/10 bg-white/5 px-12 text-[12px] font-black uppercase tracking-[0.3em] text-white backdrop-blur-xl transition-all hover:bg-white/10 border-gradient"
+                className="flex h-20 items-center justify-center rounded-full border border-[#f6ca56]/30 bg-white/5 px-12 text-[12px] font-black uppercase tracking-[0.3em] text-[#f6ca56] backdrop-blur-xl transition-all hover:bg-white/10 shadow-[0_0_20px_rgba(246,202,86,0.2)]"
               >
                 Recién Llegados
               </Link>
@@ -119,14 +115,14 @@ export default async function HomePage() {
       {/* FEATURED SECTION */}
       <section className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="flex flex-col items-center text-center mb-24 space-y-4">
-          <div className="bg-[#eab308]/10 p-4 rounded-full mb-4">
-            <Sparkles className="h-6 w-6 text-[#eab308] animate-twinkle" />
+          <div className="bg-[#f6ca56]/10 p-4 rounded-full mb-4 border border-[#f6ca56]/20">
+            <Sparkles className="h-6 w-6 text-[#f6ca56] animate-twinkle" />
           </div>
-          <h2 className="text-5xl font-serif font-medium text-white uppercase tracking-tight sm:text-8xl">
+          <h2 className="text-5xl font-serif font-light text-white uppercase tracking-tight sm:text-8xl drop-shadow-lg">
             Piezas <span className="gold-text italic">Maestras</span>
           </h2>
-          <div className="h-1 w-24 bg-gradient-to-r from-transparent via-[#db2777] to-transparent mt-6" />
-          <p className="mt-8 text-zinc-500 font-bold uppercase tracking-[0.4em] text-[10px]">
+          <div className="h-[2px] w-24 bg-gradient-to-r from-transparent via-[#f6ca56] to-transparent mt-6 opacity-60" />
+          <p className="mt-8 text-white/80 font-bold uppercase tracking-[0.4em] text-[10px]">
             La curaduría del mes
           </p>
         </div>
@@ -142,41 +138,43 @@ export default async function HomePage() {
       <section className="relative py-40 overflow-hidden">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid gap-24 lg:grid-cols-2 lg:items-center">
-            <div className="relative aspect-[4/5] w-full overflow-hidden rounded-[4rem] shadow-2xl border border-white/5 hover-lift">
+            <div className="relative aspect-[4/5] w-full overflow-hidden rounded-[4rem] shadow-2xl border border-zinc-100 hover-lift">
               <Image
                 src="https://images.unsplash.com/photo-1445205170230-053b83016050?q=80&w=1000&auto=format&fit=crop"
                 alt="Luna Boutique Editorial"
                 fill
                 className="object-cover brightness-75 transition-transform duration-1000 hover:scale-110"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-              <div className="absolute bottom-12 left-12">
-                <p className="text-[#eab308] text-[10px] font-black uppercase tracking-[0.5em] mb-4">Misión Estelar</p>
-                <h3 className="text-4xl font-serif text-white italic">Calidad Infinita.</h3>
-              </div>
+              <div className="absolute inset-0 bg-gradient-to-t from-[#3b1a5a]/90 via-transparent to-transparent" />
+            <div className="absolute bottom-12 left-12 right-12">
+              <span className="text-[10px] font-black uppercase tracking-[0.4em] text-[#f6ca56] mb-4 block drop-shadow-md">
+                Artesanía Lunar
+              </span>
+              <h3 className="text-4xl font-serif text-white drop-shadow-lg">El Proceso de Creación</h3>
+            </div>
             </div>
             <div className="space-y-12">
-              <div className="inline-flex items-center gap-3 px-6 py-2 rounded-full glass-light border-white/10">
-                <Zap className="h-4 w-4 text-[#db2777]" />
-                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-300">Nuestra Filosofía</span>
+              <div className="inline-flex items-center gap-3 px-6 py-2 rounded-full border border-[#e52b82]/40 bg-[#e52b82]/10 backdrop-blur-md">
+                <Zap className="h-4 w-4 text-[#e52b82]" />
+                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-white drop-shadow-md">Nuestra Filosofía</span>
               </div>
-              <h2 className="text-6xl font-serif font-medium leading-tight text-white sm:text-8xl">
+              <h2 className="text-6xl font-serif font-medium leading-tight text-white sm:text-8xl drop-shadow-lg">
                 Elegancia que <br />
-                <span className="gold-text italic">Trasciende.</span>
+                <span className="text-[#f6ca56] drop-shadow-[0_0_10px_rgba(246,202,86,0.6)] italic">Trasciende.</span>
               </h2>
-              <p className="text-xl text-zinc-400 font-light leading-relaxed max-w-xl">
+              <p className="text-xl text-white/90 font-light leading-relaxed max-w-xl">
                 En Luna Boutique, cada prenda es una estrella en nuestra constelación. 
                 Fusionamos la confección tradicional con visiones vanguardistas para crear 
                 piezas que no solo se visten, sino que se sienten.
               </p>
               <div className="grid grid-cols-2 gap-10 pt-8">
-                <div className="group p-8 rounded-[2.5rem] glass hover:border-[#eab308]/30 transition-all cursor-default">
-                  <h4 className="font-serif text-3xl mb-3 italic text-white group-hover:text-[#eab308] transition-colors">Artesanal</h4>
-                  <p className="text-[9px] text-zinc-500 uppercase tracking-widest font-bold">Hecho a Mano</p>
+                <div className="group p-8 rounded-[2.5rem] border border-[#f6ca56]/20 bg-black/20 backdrop-blur-md hover:border-[#f6ca56]/60 transition-all cursor-default shadow-[0_0_15px_rgba(246,202,86,0.1)]">
+                  <h4 className="font-serif text-3xl mb-3 italic text-white group-hover:text-[#f6ca56] transition-colors">Artesanal</h4>
+                  <p className="text-[9px] text-white/80 uppercase tracking-widest font-bold">Hecho a Mano</p>
                 </div>
-                <div className="group p-8 rounded-[2.5rem] glass hover:border-[#db2777]/30 transition-all cursor-default">
-                  <h4 className="font-serif text-3xl mb-3 italic text-white group-hover:text-[#db2777] transition-colors">Premium</h4>
-                  <p className="text-[9px] text-zinc-500 uppercase tracking-widest font-bold">Tejidos de Lujo</p>
+                <div className="group p-8 rounded-[2.5rem] border border-[#e52b82]/20 bg-black/20 backdrop-blur-md hover:border-[#e52b82]/60 transition-all cursor-default shadow-[0_0_15px_rgba(229,43,130,0.1)]">
+                  <h4 className="font-serif text-3xl mb-3 italic text-white group-hover:text-[#e52b82] transition-colors">Premium</h4>
+                  <p className="text-[9px] text-white/80 uppercase tracking-widest font-bold">Tejidos de Lujo</p>
                 </div>
               </div>
             </div>
@@ -186,17 +184,17 @@ export default async function HomePage() {
 
       {/* NEWSLETTER LUNA - Celestial Call */}
       <section className="container mx-auto px-4 py-32 sm:px-6 lg:px-8">
-        <div className="relative overflow-hidden rounded-[5rem] glass p-12 sm:p-24 text-center shadow-[0_0_80px_rgba(59,7,100,0.2)] border-white/5">
-          <div className="absolute inset-0 z-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')]" />
+        <div className="relative overflow-hidden rounded-[5rem] bg-black/30 backdrop-blur-xl p-12 sm:p-24 text-center shadow-[0_0_50px_rgba(229,43,130,0.2)] border border-[#e52b82]/20">
+          <div className="absolute inset-0 z-0 opacity-40 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')]" />
           
           <div className="relative z-10 max-w-4xl mx-auto space-y-12">
             <Stars className="h-10 w-10 text-[#eab308] mx-auto animate-twinkle" />
-            <h2 className="text-6xl font-serif font-medium text-white sm:text-9xl italic leading-none tracking-tighter">
-              Únete al <span className="gold-text">Círculo Lunar.</span>
-            </h2>
-            <p className="text-xl text-zinc-400 font-light max-w-2xl mx-auto">
-              Sé el primero en presenciar nuestros nuevos lanzamientos y accede a eventos exclusivos bajo la luz de la luna.
-            </p>
+            <h2 className="text-4xl font-serif font-light text-white sm:text-6xl text-center drop-shadow-lg">
+            Únete a la <span className="text-[#f6ca56] italic">Constelación</span>
+          </h2>
+          <p className="text-white/80 text-center uppercase tracking-widest text-[10px] max-w-xl mx-auto">
+            Acceso exclusivo a nuevas colecciones, eventos privados y piezas de edición limitada.
+          </p>
             
             <form className="flex flex-col gap-6 sm:flex-row sm:items-center max-w-2xl mx-auto pt-8">
               <input
@@ -207,7 +205,7 @@ export default async function HomePage() {
               />
               <button
                 type="submit"
-                className="h-20 px-16 rounded-full bg-[#db2777] text-white font-black uppercase tracking-[0.3em] text-[11px] hover:scale-105 transition-all shadow-[0_0_30px_rgba(219,39,119,0.3)] hover:bg-pink-600"
+                className="h-20 px-16 rounded-full bg-[#f6ca56] text-[#3b1a5a] font-black uppercase tracking-[0.3em] text-[11px] hover:scale-[1.05] transition-all hover:bg-[#ffeeaa] shadow-[0_0_20px_rgba(246,202,86,0.4)]"
               >
                 Suscribirse
               </button>
