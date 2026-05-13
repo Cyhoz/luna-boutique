@@ -26,16 +26,24 @@ export async function addProduct(formData: FormData) {
     
     // 1. Datos del Producto
     const nombre = formData.get('nombre') as string
-    const descripcion = formData.get('descripcion') as string
-    const id_categoria = formData.get('id_categoria') as string || null
-    const material = formData.get('material') as string
-    const genero = formData.get('genero') as string
-    const marca = formData.get('marca') as string
+    const descripcionRaw = formData.get('descripcion')
+    const descripcion = descripcionRaw ? (descripcionRaw as string) : 'Pieza exclusiva de Luna Boutique.'
+    
+    const id_categoria_raw = formData.get('id_categoria') as string
+    const id_categoria = id_categoria_raw && id_categoria_raw !== '' ? id_categoria_raw : null
+    
+    const material = formData.get('material') as string || 'No especificado'
+    const genero = formData.get('genero') as string || 'Unisex'
+    const marca = formData.get('marca') as string || 'Luna'
     
     // 2. Datos de la Variante Inicial
-    const talla = formData.get('talla') as string
-    const id_color = formData.get('id_color') as string || null
-    const sku = formData.get('sku') as string || `SKU-${Date.now()}`
+    const tallaRaw = formData.get('talla') as string
+    const tallas = tallaRaw ? tallaRaw.split(',').map(t => t.trim()).filter(Boolean) : ['Única']
+    
+    const id_color_raw = formData.get('id_color') as string
+    const id_color = id_color_raw && id_color_raw !== '' ? id_color_raw : null
+    
+    const baseSku = formData.get('sku') as string || `LUNA-${Date.now()}`
     const precio = parseFloat(formData.get('precio') as string)
     const precio_descuento = parseFloat(formData.get('precio_descuento') as string) || 0
     const stock_actual = parseInt(formData.get('stock_actual') as string) || 0
@@ -45,7 +53,7 @@ export async function addProduct(formData: FormData) {
     const imagen_url = formData.get('imagen_url') as string
     
     // TRANSACCIÓN: Insertar Producto
-    const { data: product, error: productError } = await supabase
+    const { data: product, error: productError } = await adminSupabase
       .from('producto')
       .insert({ 
         nombre, 
@@ -59,50 +67,57 @@ export async function addProduct(formData: FormData) {
       .select()
       .single()
 
-    if (productError) throw productError
+    if (productError) throw new Error(`Error en Producto: ${productError.message}`)
 
-    // Insertar Variante
-    const { data: variant, error: variantError } = await supabase
-      .from('variante_producto')
-      .insert({
-        id_producto: product.id_producto,
-        id_color: id_color,
-        talla: talla,
-        sku: sku,
-        precio: precio,
-        precio_descuento: precio_descuento,
-        estado: 'activo'
-      })
-      .select()
-      .single()
+    // Iterar y crear cada talla como una variante independiente
+    for (const talla of tallas) {
+      const variantSku = tallas.length > 1 ? `${baseSku}-${talla.toUpperCase()}` : baseSku;
 
-    if (variantError) throw variantError
+      // Insertar Variante
+      const { data: variant, error: variantError } = await adminSupabase
+        .from('variante_producto')
+        .insert({
+          id_producto: product.id_producto,
+          id_color: id_color,
+          talla: talla,
+          sku: variantSku,
+          precio: precio,
+          precio_descuento: precio_descuento,
+          estado: 'activo'
+        })
+        .select()
+        .single()
 
-    // Insertar Inventario Inicial
-    const { error: invError } = await supabase
-      .from('inventario')
-      .insert({
-        id_variante: variant.id_variante,
-        stock_actual: stock_actual,
-        stock_minimo: stock_minimo
-      })
+      if (variantError) throw new Error(`Error en Variante (${talla}): ${variantError.message}`)
 
-    if (invError) throw invError
+      // Insertar Inventario Inicial para esta talla
+      const { error: invError } = await adminSupabase
+        .from('inventario')
+        .insert({
+          id_variante: variant.id_variante,
+          stock_actual: stock_actual,
+          stock_minimo: stock_minimo
+        })
+
+      if (invError) throw new Error(`Error en Inventario (${talla}): ${invError.message}`)
+    }
 
     // Insertar Imagen Principal
-    if (imagen_url) {
-      await supabase.from('imagen_producto').insert({
+    if (imagen_url && imagen_url.trim() !== '') {
+      const { error: imgError } = await adminSupabase.from('imagen_producto').insert({
         id_producto: product.id_producto,
         url_imagen: imagen_url,
         es_principal: true,
         orden: 0
       })
+      if (imgError) throw new Error(`Error en Imagen: ${imgError.message}`)
     }
     
     revalidatePath('/admin')
     revalidatePath('/')
   } catch (error: any) {
-    console.error('Error adding product:', error)
+    console.error('CRITICAL ERROR ADDING PRODUCT:', error)
+    throw new Error(`Fallo al añadir el producto a la base de datos: ${error.message}`)
   }
 }
 
@@ -239,7 +254,7 @@ export async function updateProduct(formData: FormData) {
     const genero = formData.get('genero') as string
     const marca = formData.get('marca') as string
 
-    const { error } = await supabase
+    const { error } = await adminSupabase
       .from('producto')
       .update({ 
         nombre,
@@ -419,9 +434,46 @@ export async function updateVariantStock(variantId: string, stock: number, motiv
 
 export async function deleteProduct(productId: string) {
   try {
-    const { supabase } = await checkAdmin()
-    // Debido a ON DELETE CASCADE en el MER, esto debería borrar variantes, imágenes e inventario
-    await supabase.from('producto').delete().eq('id_producto', productId)
+    await checkAdmin()
+    
+    // 1. Obtener todas las variantes del producto
+    const { data: variants } = await adminSupabase
+      .from('variante_producto')
+      .select('id_variante')
+      .eq('id_producto', productId)
+      
+    if (variants && variants.length > 0) {
+      const variantIds = variants.map(v => v.id_variante)
+      
+      // 2. Obtener los inventarios de esas variantes
+      const { data: inventories } = await adminSupabase
+        .from('inventario')
+        .select('id_inventario')
+        .in('id_variante', variantIds)
+        
+      if (inventories && inventories.length > 0) {
+        const invIds = inventories.map(i => i.id_inventario)
+        // 3. Eliminar movimientos de inventario asociados
+        await adminSupabase.from('movimiento_inventario').delete().in('id_inventario', invIds)
+        // 4. Eliminar inventarios
+        await adminSupabase.from('inventario').delete().in('id_variante', variantIds)
+      }
+      
+      // 5. Eliminar detalles de pedido vinculados (peligroso en prod, pero necesario si no hay cascade y queremos borrar)
+      await adminSupabase.from('detalle_pedido').delete().in('id_variante', variantIds)
+      
+      // 6. Eliminar variantes
+      await adminSupabase.from('variante_producto').delete().eq('id_producto', productId)
+    }
+
+    // 7. Eliminar imágenes
+    await adminSupabase.from('imagen_producto').delete().eq('id_producto', productId)
+
+    // 8. Eliminar producto finalmente
+    const { error } = await adminSupabase.from('producto').delete().eq('id_producto', productId)
+    
+    if (error) throw error
+    
     revalidatePath('/admin')
     revalidatePath('/')
     return { success: true }

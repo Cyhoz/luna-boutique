@@ -10,11 +10,31 @@ import { ArrowLeft, Lock, CreditCard, CheckCircle2, Truck, ShieldCheck, Shopping
 import { motion, AnimatePresence } from 'framer-motion'
 import { getMediosPago } from '@/services/adminService'
 
-const SHIPPING_RATES: Record<string, number> = {
-  'santiago': 3500,
-  'valparaiso': 4500,
-  'concepcion': 5000,
-  'default': 6000
+const SHIPPING_ZONES = [
+  { id: 'biobio', name: 'Biobío / Ñuble (VIII)', desc: 'Local - misma región' },
+  { id: 'maule', name: 'Maule (VII)', desc: '~200 km - Talca, Curicó' },
+  { id: 'araucania', name: 'La Araucanía (IX)', desc: '~200 km - Temuco' },
+  { id: 'rm', name: 'Región Metropolitana (XIII)', desc: '~500 km - Santiago' },
+  { id: 'sur', name: 'Sur lejano (X–XVI)', desc: 'Puerto Montt, Valdivia...' },
+  { id: 'norte', name: 'Norte (I–VI)', desc: 'Valparaíso, La Serena...' },
+  { id: 'extrema', name: 'Zona extrema (XI, XII, XV)', desc: 'Aysén - Magallanes - Arica' }
+]
+
+const getCouriers = (multiplier: number) => [
+  { id: 'starken', name: 'Starken', price: Math.round((3490 * multiplier) / 10) * 10, eta: multiplier > 1.5 ? '2-4 días hábiles' : '1 día hábil', badge: multiplier === 1 ? 'recomendado' : undefined },
+  { id: 'chilexpress', name: 'Chilexpress', price: Math.round((3990 * multiplier) / 10) * 10, eta: multiplier > 1.5 ? '2-3 días hábiles' : '1 día hábil' },
+  { id: 'blue', name: 'Blue Express', price: Math.round((3790 * multiplier) / 10) * 10, eta: multiplier > 1.5 ? '2-4 días hábiles' : '1–2 días' },
+  { id: 'correos', name: 'Correos de Chile', price: Math.round((2490 * multiplier) / 10) * 10, eta: multiplier > 1.5 ? '4-7 días hábiles' : '2–3 días', badge: 'económico' }
+]
+
+const COURIER_RATES: Record<string, any[]> = {
+  biobio: getCouriers(1),
+  maule: getCouriers(1.15),
+  araucania: getCouriers(1.15),
+  rm: getCouriers(1.3),
+  sur: getCouriers(1.6),
+  norte: getCouriers(1.6),
+  extrema: getCouriers(2.5)
 }
 
 export default function CheckoutPage() {
@@ -27,6 +47,11 @@ export default function CheckoutPage() {
   const [city, setCity] = useState('')
   const [mediosPago, setMediosPago] = useState<any[]>([])
   const [selectedMedio, setSelectedMedio] = useState<any>(null)
+  
+  // Shipping State
+  const [deliveryMode, setDeliveryMode] = useState<'personal' | 'shipping'>('personal')
+  const [selectedZone, setSelectedZone] = useState('biobio')
+  const [selectedCourier, setSelectedCourier] = useState('starken')
 
   useEffect(() => {
     setMounted(true)
@@ -64,11 +89,16 @@ export default function CheckoutPage() {
     )
   }
 
-  const cityKey = city.toLowerCase().trim()
-  let shipping = city ? (SHIPPING_RATES[cityKey] || SHIPPING_RATES['default']) : 0
-
-  if (subtotal > 150000) { 
-    shipping = 0
+  // Get current shipping rate based on selection
+  const currentCouriers = COURIER_RATES[selectedZone] || COURIER_RATES['rm']
+  const selectedCourierObj = currentCouriers.find(c => c.id === selectedCourier) || currentCouriers[0]
+  
+  let shipping = 0
+  if (deliveryMode === 'shipping') {
+    shipping = selectedCourierObj.price
+    if (subtotal > 150000) { 
+      shipping = 0
+    }
   }
 
   const total = subtotal + shipping
@@ -90,8 +120,14 @@ export default function CheckoutPage() {
     }
 
     try {
+      const envioData = {
+        modo_entrega: deliveryMode,
+        paqueteria: deliveryMode === 'personal' ? 'Entrega Personal' : selectedCourierObj.name,
+        zona_destino: deliveryMode === 'personal' ? 'Los Ángeles' : (SHIPPING_ZONES.find(z => z.id === selectedZone)?.name || selectedZone)
+      }
+
       const { processCheckout } = await import('@/services/checkoutService')
-      const result = await processCheckout(items, total, shipping, formData, selectedMedio?.nombre || 'Webpay')
+      const result = await processCheckout(items, total, shipping, formData, selectedMedio?.nombre || 'Webpay', envioData)
       
       if (!result.success) {
         addNotification(result.error || "Error al procesar el pedido.", "error")
@@ -226,7 +262,163 @@ export default function CheckoutPage() {
 
               <section className="space-y-8">
                 <div className="flex items-center gap-5">
-                  <div className="w-10 h-10 rounded-2xl glass text-white flex items-center justify-center font-black text-sm border-white/10">3</div>
+                  <div className="w-10 h-10 rounded-2xl glass text-[#eab308] flex items-center justify-center font-black text-sm border-white/10">3</div>
+                  <h2 className="text-2xl font-serif font-medium text-white italic">Envío</h2>
+                </div>
+                
+                <div className="flex flex-col gap-8">
+                  {/* Etiqueta de Origen */}
+                  <div className="inline-flex items-center gap-2 self-start px-4 py-2 rounded-full border border-white/10 bg-white/5">
+                    <div className="w-1.5 h-1.5 rounded-full bg-[#eab308]" />
+                    <span className="text-[10px] font-bold text-zinc-300">Despacho desde Los Ángeles, Región del Biobío</span>
+                  </div>
+
+                  {/* MODO DE ENTREGA */}
+                  <div className="space-y-4">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-zinc-500">MODO DE ENTREGA</p>
+                    <div className="grid grid-cols-2 gap-4">
+                      <button
+                        type="button"
+                        onClick={() => setDeliveryMode('personal')}
+                        className={`p-4 rounded-xl text-left border transition-all ${
+                          deliveryMode === 'personal'
+                            ? 'bg-[#3b0764]/40 border-[#6b21a8] shadow-[0_0_20px_rgba(107,33,168,0.2)]'
+                            : 'bg-transparent border-white/10 hover:border-white/20'
+                        }`}
+                      >
+                        <div className="mb-2">
+                           <MapPin className={`w-5 h-5 ${deliveryMode === 'personal' ? 'text-[#a855f7]' : 'text-zinc-600'}`} />
+                        </div>
+                        <span className={`block text-sm font-bold mb-1 ${deliveryMode === 'personal' ? 'text-white' : 'text-zinc-400'}`}>Entrega personal</span>
+                        <span className="block text-[10px] text-[#a855f7] mb-2">Solo Los Ángeles</span>
+                        <span className="inline-block px-2 py-0.5 rounded-sm bg-emerald-900/50 text-emerald-400 text-[9px] font-bold">Gratis</span>
+                      </button>
+                      
+                      <button
+                        type="button"
+                        onClick={() => setDeliveryMode('shipping')}
+                        className={`p-4 rounded-xl text-left border transition-all ${
+                          deliveryMode === 'shipping'
+                            ? 'bg-[#3b0764]/40 border-[#6b21a8] shadow-[0_0_20px_rgba(107,33,168,0.2)]'
+                            : 'bg-transparent border-white/10 hover:border-white/20'
+                        }`}
+                      >
+                        <div className="mb-2">
+                           <Truck className={`w-5 h-5 ${deliveryMode === 'shipping' ? 'text-[#a855f7]' : 'text-zinc-600'}`} />
+                        </div>
+                        <span className={`block text-sm font-bold mb-1 ${deliveryMode === 'shipping' ? 'text-white' : 'text-zinc-400'}`}>Envío a todo Chile</span>
+                        <span className="block text-[10px] text-zinc-500">Elige tu paquetería</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {deliveryMode === 'personal' ? (
+                    <div className="p-6 rounded-xl border border-emerald-900/30 bg-[#0f172a]/40 space-y-5">
+                      <div className="flex gap-4">
+                        <div className="w-4 h-4 rounded-sm border border-emerald-500/50 flex items-center justify-center shrink-0 mt-0.5">
+                          <div className="w-2 h-2 bg-emerald-500 rounded-sm" />
+                        </div>
+                        <p className="text-xs text-zinc-300 leading-relaxed"><strong className="text-white font-medium">Coordinamos el punto de encuentro</strong> dentro de Los Ángeles una vez confirmado el pago.</p>
+                      </div>
+                      <div className="flex gap-4">
+                        <div className="w-4 h-4 rounded-sm border border-emerald-500/50 flex items-center justify-center shrink-0 mt-0.5">
+                          <div className="w-2 h-2 bg-emerald-500 rounded-sm" />
+                        </div>
+                        <p className="text-xs text-zinc-300 leading-relaxed"><strong className="text-white font-medium">Plazo:</strong> 1–2 días hábiles para coordinar horario y lugar.</p>
+                      </div>
+                      <div className="flex gap-4">
+                        <div className="w-4 h-4 rounded-sm border border-emerald-500/50 flex items-center justify-center shrink-0 mt-0.5">
+                          <div className="w-2 h-2 bg-emerald-500 rounded-sm" />
+                        </div>
+                        <p className="text-xs text-zinc-300 leading-relaxed">Entrega directa, sin riesgo de daño en tránsito. La pieza llega tal como salió del taller.</p>
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      {/* Zonas */}
+                      <div className="space-y-4">
+                        <p className="text-[10px] font-black uppercase tracking-widest text-zinc-500">¿A DÓNDE VA EL PEDIDO?</p>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          {SHIPPING_ZONES.map(zone => (
+                            <button
+                              key={zone.id}
+                              type="button"
+                              onClick={() => {
+                                setSelectedZone(zone.id)
+                                const couriersForZone = COURIER_RATES[zone.id]
+                                if (!couriersForZone.find(c => c.id === selectedCourier)) {
+                                  setSelectedCourier(couriersForZone[0].id)
+                                }
+                              }}
+                              className={`p-4 rounded-xl text-left transition-all border ${
+                                selectedZone === zone.id
+                                  ? 'bg-[#3b0764]/40 border-[#6b21a8] shadow-[0_0_20px_rgba(107,33,168,0.2)]'
+                                  : 'bg-transparent border-white/10 hover:border-white/20'
+                              }`}
+                            >
+                              <span className={`block text-[11px] font-bold mb-1 ${selectedZone === zone.id ? 'text-white' : 'text-zinc-300'}`}>{zone.name}</span>
+                              <span className={`block text-[9px] ${selectedZone === zone.id ? 'text-[#a855f7]' : 'text-zinc-600'}`}>{zone.desc}</span>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Couriers */}
+                      <div className="space-y-4">
+                        <p className="text-[10px] font-black uppercase tracking-widest text-zinc-500">PAQUETERÍA</p>
+                        <div className="space-y-3">
+                          {currentCouriers.map((courier) => (
+                            <button
+                              key={courier.id}
+                              type="button"
+                              onClick={() => setSelectedCourier(courier.id)}
+                              className={`w-full p-4 rounded-xl flex items-center justify-between border transition-all ${
+                                selectedCourier === courier.id
+                                  ? 'bg-[#3b0764]/20 border-[#6b21a8] shadow-[0_0_15px_rgba(107,33,168,0.15)]'
+                                  : 'bg-transparent border-white/10 hover:border-white/20'
+                              }`}
+                            >
+                              <div className="flex items-center gap-4">
+                                <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                                  selectedCourier === courier.id ? 'border-[#a855f7]' : 'border-zinc-700'
+                                }`}>
+                                  {selectedCourier === courier.id && <div className="w-1.5 h-1.5 rounded-full bg-[#a855f7]" />}
+                                </div>
+                                <div className="flex items-center gap-3">
+                                  <span className="text-xs font-bold text-white">{courier.name}</span>
+                                  {courier.badge && (
+                                    <span className={`text-[9px] px-2 py-0.5 rounded-full font-bold ${
+                                      courier.badge === 'recomendado' ? 'bg-emerald-900/40 text-emerald-400' : 'bg-[#3b0764] text-[#a855f7]'
+                                    }`}>
+                                      {courier.badge}
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                              <div className="text-right">
+                                <span className="block text-sm font-bold text-[#eab308]">${courier.price.toLocaleString()}</span>
+                                <span className="block text-[9px] text-zinc-500 mt-0.5">{courier.eta}</span>
+                              </div>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                  {/* Costo Resumen */}
+                  <div className="pt-6 border-t border-white/5 flex justify-between items-center">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500">COSTO DE ENTREGA</span>
+                    <span className={`text-sm font-bold ${shipping === 0 ? 'text-emerald-400' : 'text-white'}`}>
+                      {shipping === 0 ? 'Cortesía' : `$${shipping.toLocaleString()}`}
+                    </span>
+                  </div>
+                </div>
+              </section>
+
+              <section className="space-y-8">
+                <div className="flex items-center gap-5">
+                  <div className="w-10 h-10 rounded-2xl glass text-white flex items-center justify-center font-black text-sm border-white/10">4</div>
                   <h2 className="text-2xl font-serif font-medium text-white italic">Método de Pago</h2>
                 </div>
                 <div className="grid gap-6">
@@ -324,10 +516,14 @@ export default function CheckoutPage() {
                   <span className="text-sm font-serif text-white">${subtotal.toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-zinc-500 uppercase tracking-[0.3em] font-black text-[9px]">Envío Boutique</span>
-                  <span className="text-sm font-serif text-[#eab308]">
-                    {shipping === 0 ? 'CORTESÍA' : `$${shipping.toLocaleString()}`}
+                  <span className="text-zinc-500 uppercase tracking-[0.3em] font-black text-[9px]">Envío</span>
+                  <span className={`text-sm font-serif ${shipping === 0 ? 'text-emerald-400' : 'text-[#a855f7]'}`}>
+                    {shipping === 0 ? 'Cortesía' : `$${shipping.toLocaleString()}`}
                   </span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-zinc-500 uppercase tracking-[0.3em] font-black text-[9px]">Embalaje</span>
+                  <span className="text-sm font-serif text-[#eab308]">Cortesía</span>
                 </div>
                 <div className="pt-8 border-t border-white/5 flex justify-between items-end">
                   <div className="space-y-1">

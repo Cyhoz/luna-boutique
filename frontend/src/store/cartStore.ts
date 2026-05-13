@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+import { useNotificationStore } from './notificationStore'
 
 export interface CartItem {
   id: string // product_variant_id
@@ -37,7 +38,7 @@ export const useCartStore = create<CartState>()(
           const newQuantity = Number(existingItem.quantity) + Number(item.quantity)
           // Validar stock
           if (newQuantity > item.stock) {
-            alert(`Lo sentimos, solo quedan ${item.stock} unidades disponibles.`)
+            useNotificationStore.getState().addNotification(`Lo sentimos, solo quedan ${item.stock} unidades disponibles.`, 'error')
             return
           }
 
@@ -60,7 +61,7 @@ export const useCartStore = create<CartState>()(
       updateQuantity: (id, quantity) => {
         const item = get().items.find(i => i.id === id)
         if (item && quantity > item.stock) {
-          alert(`Límite de stock alcanzado (${item.stock} disponibles)`)
+          useNotificationStore.getState().addNotification(`Límite de stock alcanzado (${item.stock} disponibles)`, 'error')
           return
         }
         

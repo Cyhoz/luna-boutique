@@ -3,7 +3,18 @@
 import { createClient as createServerClient } from '@/lib/supabase/server'
 import { createClient } from '@supabase/supabase-js'
 
-export async function processCheckout(items: any[], total: number, shippingCost: number, formData: FormData, metodoPago: string) {
+export async function processCheckout(
+  items: any[], 
+  total: number, 
+  shippingCost: number, 
+  formData: FormData, 
+  metodoPago: string,
+  envioData: {
+    modo_entrega: string,
+    paqueteria: string,
+    zona_destino: string
+  }
+) {
   const serverSupabase = await createServerClient()
   
   // Cliente privilegiado para bypass RLS
@@ -86,14 +97,16 @@ export async function processCheckout(items: any[], total: number, shippingCost:
     return { success: false, error: `Error DB: ${orderError.message} (${orderError.details || 'sin detalles'})` }
   }
 
-  // 4. Crear el Registro de Envío (ENVIO)
+  // 4. Crear el Registro de Envío (ENVIO) coincidiendo con la nueva tabla SQL
   const { error: envioError } = await adminSupabase
     .from('envio')
     .insert({
       id_pedido: order.id_pedido,
-      paqueteria: 'Boutique Express',
-      costo_envio: shippingCost,
-      estado: 'en_proceso'
+      paqueteria: envioData.paqueteria,
+      zona_destino: envioData.zona_destino,
+      modo_entrega: envioData.modo_entrega,
+      costo_total_envio: shippingCost,
+      estado: 'Pendiente'
     })
 
   if (envioError) console.error("Error al crear envío:", envioError)

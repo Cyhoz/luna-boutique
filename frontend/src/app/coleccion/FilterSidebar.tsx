@@ -4,7 +4,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { useCallback } from 'react'
 import { Filter, X, Sparkles } from 'lucide-react'
 
-export function FilterSidebar() {
+export function FilterSidebar({ categorias = [], tallas = [] }: { categorias?: string[], tallas?: string[] }) {
   const router = useRouter()
   const searchParams = useSearchParams()
 
@@ -56,46 +56,50 @@ export function FilterSidebar() {
 
       <div className="space-y-12">
         {/* Categorías */}
-        <div>
-          <h3 className="text-[10px] font-sans font-black uppercase tracking-[0.2em] text-muted-foreground mb-8">Categoría</h3>
-          <ul className="space-y-5">
-            {['SUDADERAS', 'PANTALONES', 'CAMISETAS', 'ABRIGOS', 'ACCESORIOS'].map((cat) => (
-              <li key={cat}>
-                <button 
-                  onClick={() => handleFilter('categoria', cat)}
-                  className={`flex items-center justify-between w-full text-[11px] font-bold uppercase tracking-widest transition-all ${
-                    currentCategory === cat 
-                      ? 'text-primary translate-x-1' 
-                      : 'text-muted-foreground hover:text-primary'
-                  }`}
-                >
-                  {cat}
-                  {currentCategory === cat && <div className="w-1.5 h-1.5 bg-accent rounded-full" />}
-                </button>
-              </li>
-            ))}
-          </ul>
-        </div>
+        {categorias.length > 0 && (
+          <div>
+            <h3 className="text-[10px] font-sans font-black uppercase tracking-[0.2em] text-muted-foreground mb-8">Categoría</h3>
+            <ul className="space-y-5">
+              {categorias.map((cat) => (
+                <li key={cat}>
+                  <button 
+                    onClick={() => handleFilter('categoria', cat)}
+                    className={`flex items-center justify-between w-full text-[11px] font-bold uppercase tracking-widest transition-all ${
+                      currentCategory === cat 
+                        ? 'text-primary translate-x-1' 
+                        : 'text-muted-foreground hover:text-primary'
+                    }`}
+                  >
+                    {cat}
+                    {currentCategory === cat && <div className="w-1.5 h-1.5 bg-accent rounded-full" />}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
 
         {/* Tallas */}
-        <div>
-          <h3 className="text-[10px] font-sans font-black uppercase tracking-[0.2em] text-muted-foreground mb-8">Talla</h3>
-          <div className="grid grid-cols-4 gap-2">
-            {['S', 'M', 'L', 'XL'].map((size) => (
-              <button
-                key={size}
-                onClick={() => handleFilter('talla', size)}
-                className={`h-11 rounded-full text-[10px] font-black border transition-all ${
-                  currentSize === size
-                    ? 'bg-primary text-primary-foreground border-primary'
-                    : 'bg-transparent border-zinc-100 dark:border-zinc-800 text-muted-foreground hover:border-accent'
-                }`}
-              >
-                {size}
-              </button>
-            ))}
+        {tallas.length > 0 && (
+          <div>
+            <h3 className="text-[10px] font-sans font-black uppercase tracking-[0.2em] text-muted-foreground mb-8">Talla</h3>
+            <div className="grid grid-cols-4 gap-2">
+              {tallas.map((size) => (
+                <button
+                  key={size}
+                  onClick={() => handleFilter('talla', size)}
+                  className={`h-11 rounded-full text-[10px] font-black border transition-all ${
+                    currentSize === size
+                      ? 'bg-primary text-primary-foreground border-primary'
+                      : 'bg-transparent border-zinc-100 dark:border-zinc-800 text-muted-foreground hover:border-accent'
+                  }`}
+                >
+                  {size}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Rango de Precio */}
         <div>

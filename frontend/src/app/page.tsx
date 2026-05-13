@@ -16,6 +16,7 @@ export default async function HomePage() {
       categoria (nombre),
       variante_producto (
         id_variante,
+        talla,
         precio,
         precio_descuento,
         inventario (stock_actual)
@@ -51,7 +52,8 @@ export default async function HomePage() {
       category: (p.categoria as any)?.nombre || 'EXCLUSIVO',
       isNew: true,
       isOnSale: firstVariant.precio_descuento && firstVariant.precio_descuento > 0,
-      stock: totalStock
+      stock: totalStock,
+      variants: p.variante_producto || []
     }
   }) || []
 

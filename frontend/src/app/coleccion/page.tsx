@@ -62,6 +62,12 @@ export default async function ColeccionPage({
 
   const { data: dbProducts } = await query
 
+  const { data: categoriasQuery } = await supabase.from('categoria').select('nombre').eq('estado', 'activo')
+  const dbCategorias = categoriasQuery?.map(c => c.nombre) || []
+
+  const { data: tallasQuery } = await supabase.from('variante_producto').select('talla').eq('estado', 'activo')
+  const dbTallas = Array.from(new Set(tallasQuery?.map(v => v.talla) || [])).filter(Boolean).sort()
+
   let formattedProducts = dbProducts?.map((p: any) => {
     const mainImage = p.imagen_producto?.find((img: any) => img.es_principal)?.url_imagen 
       || p.imagen_producto?.[0]?.url_imagen 
@@ -117,7 +123,7 @@ export default async function ColeccionPage({
           {/* Sidebar de Filtros - Glassmorphism */}
           <Suspense fallback={<div className="w-64 animate-pulse bg-white/5 h-96 rounded-[3rem]"></div>}>
             <div className="lg:sticky lg:top-32 w-full lg:w-72">
-              <FilterSidebar />
+              <FilterSidebar categorias={dbCategorias} tallas={dbTallas} />
             </div>
           </Suspense>
 

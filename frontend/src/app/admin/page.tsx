@@ -15,6 +15,7 @@ import { DeleteOrderButton } from '@/components/admin/DeleteOrderButton'
 import { BulkDeleteOrdersForm } from '@/components/admin/BulkDeleteOrdersForm'
 import Link from 'next/link'
 import { formatPrice } from '@/utils/formatters'
+import { AdminSearch } from './AdminSearch'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -24,7 +25,14 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false }
 }
 
-export default async function AdminPage() {
+export default async function AdminPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+}) {
+  const params = await searchParams
+  const q = params.q as string || ''
+
   const authSupabase = await serverSupabase()
 
   // 1. Verificación de Seguridad (Usamos el cliente con cookies)
@@ -40,7 +48,7 @@ export default async function AdminPage() {
   const colors = await getColors()
 
   // 2. Carga de Datos Compleja (Joins) - Basado en MER
-  const { data: products } = await supabase
+  let productsQuery = supabase
     .from('producto')
     .select(`
       id_producto, nombre, estado, marca, genero, material,
@@ -58,6 +66,12 @@ export default async function AdminPage() {
       imagen_producto (url_imagen, es_principal)
     `)
     .order('fecha_creacion', { ascending: false })
+
+  if (q) {
+    productsQuery = productsQuery.ilike('nombre', `%${q}%`)
+  }
+
+  const { data: products } = await productsQuery
 
   // Obtenemos pedidos con información de cliente, envío y DETALLES (para el profe)
   const { data: orders } = await supabase
@@ -116,13 +130,10 @@ export default async function AdminPage() {
           </div>
           
           <div className="flex gap-4">
-            <div className="glass px-6 py-4 rounded-2xl flex items-center gap-4 border-white/5">
-              <Search className="h-4 w-4 text-zinc-600" />
-              <input type="text" placeholder="BUSCAR PIEZA..." className="bg-transparent border-none outline-none text-[10px] font-black uppercase tracking-widest text-white placeholder:text-zinc-700 w-32 md:w-48" />
-            </div>
-            <button className="w-14 h-14 glass rounded-2xl flex items-center justify-center border-white/5 hover:bg-white/5 transition-all">
+            <AdminSearch />
+            <a href="#config-section" className="w-14 h-14 glass rounded-2xl flex items-center justify-center border-white/5 hover:bg-white/5 transition-all">
               <Settings className="h-5 w-5 text-zinc-500" />
-            </button>
+            </a>
           </div>
         </div>
 
@@ -270,7 +281,7 @@ export default async function AdminPage() {
             </div>
 
             {/* Forms for Categories and Colors */}
-            <div className="mt-12">
+            <div id="config-section" className="mt-12 scroll-mt-32">
               <div className="flex items-center gap-4 mb-8 ml-6">
                  <Settings className="h-4 w-4 text-zinc-500" />
                  <h2 className="text-xl font-serif text-white/50 italic">Configuración de Atributos</h2>

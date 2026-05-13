@@ -33,7 +33,7 @@ export function InventoryHistory() {
         tipo_movimiento,
         cantidad,
         fecha_movimiento,
-        descripcion,
+        motivo,
         inventario (
           id_variante,
           variante_producto (
@@ -48,6 +48,8 @@ export function InventoryHistory() {
 
     if (!error && data) {
       setMovements(data)
+    } else if (error) {
+      console.error("Error fetching movements:", error)
     }
     setLoading(false)
   }
@@ -123,11 +125,12 @@ export function InventoryHistory() {
                       </span>
                     </td>
                     <td className="px-8 py-6">
-                      <p className="text-[10px] text-zinc-500 font-medium italic max-w-[200px] truncate">{m.descripcion || 'Sin descripción'}</p>
+                      <p className="text-[10px] text-zinc-500 font-medium italic max-w-[200px] truncate">{m.motivo || 'Sin descripción'}</p>
                     </td>
                   </motion.tr>
                 ))}
               </AnimatePresence>
+
             </tbody>
           </table>
         </div>

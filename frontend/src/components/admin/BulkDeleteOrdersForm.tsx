@@ -5,6 +5,7 @@ import { Trash2, Loader2, AlertTriangle, X } from 'lucide-react'
 import { deleteMultipleOrders } from '@/services/adminService'
 import { useRouter } from 'next/navigation'
 import { createPortal } from 'react-dom'
+import { useNotificationStore } from '@/store/notificationStore'
 
 export function BulkDeleteOrdersForm({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(false)
@@ -25,11 +26,23 @@ export function BulkDeleteOrdersForm({ children }: { children: React.ReactNode }
     setSelectedCount(orderIds.length)
   }
 
+  const handleSelectAll = () => {
+    const checkboxes = document.querySelectorAll<HTMLInputElement>('input[name="orderIds"]')
+    // Si hay checkboxes pero no todos están seleccionados, los seleccionamos todos. Si no, deseleccionamos.
+    const allSelected = checkboxes.length > 0 && Array.from(checkboxes).every(cb => cb.checked)
+    
+    checkboxes.forEach(cb => {
+      cb.checked = !allSelected
+    })
+    
+    setSelectedCount(!allSelected ? checkboxes.length : 0)
+  }
+
   const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     
     if (selectedCount === 0) {
-      alert('Debes seleccionar al menos un pedido.')
+      useNotificationStore.getState().addNotification('Debes seleccionar al menos un pedido.', 'error')
       return
     }
 
@@ -45,15 +58,16 @@ export function BulkDeleteOrdersForm({ children }: { children: React.ReactNode }
       const formData = new FormData(form)
       const res = await deleteMultipleOrders(formData)
       if (res && !res.success) {
-        alert(res.error)
+        useNotificationStore.getState().addNotification(res.error, 'error')
       } else {
         form.reset()
         setSelectedCount(0)
         setShowModal(false)
         router.refresh()
+        useNotificationStore.getState().addNotification('Registros eliminados con éxito', 'success')
       }
     } catch (e: any) {
-      alert(e.message)
+      useNotificationStore.getState().addNotification(e.message, 'error')
       setShowModal(false)
     } finally {
       setLoading(false)
@@ -90,17 +104,28 @@ export function BulkDeleteOrdersForm({ children }: { children: React.ReactNode }
 
   return (
     <form id="bulk-delete-form" onSubmit={handleFormSubmit} onChange={handleFormChange} className="relative">
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
         <h2 className="text-2xl font-serif font-medium text-white italic">Gestión de Registros</h2>
-        {selectedCount > 0 && (
-          <button 
-            type="submit"
-            className="flex items-center gap-2 px-6 py-3 rounded-xl bg-red-500/10 text-red-500 border border-red-500/20 hover:bg-red-500 hover:text-white transition-all text-[10px] font-black uppercase tracking-widest animate-in fade-in zoom-in"
+        
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={handleSelectAll}
+            className="px-5 py-3 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 text-white transition-all text-[10px] font-black uppercase tracking-widest shadow-lg active:scale-95"
           >
-            <Trash2 className="h-4 w-4" />
-            Eliminar Seleccionados ({selectedCount})
+            Seleccionar Todos
           </button>
-        )}
+
+          {selectedCount > 0 && (
+            <button 
+              type="submit"
+              className="flex items-center gap-2 px-6 py-3 rounded-xl bg-red-500/10 text-red-500 border border-red-500/20 hover:bg-red-500 hover:text-white transition-all text-[10px] font-black uppercase tracking-widest animate-in fade-in zoom-in shadow-lg active:scale-95"
+            >
+              <Trash2 className="h-4 w-4" />
+              Eliminar ({selectedCount})
+            </button>
+          )}
+        </div>
       </div>
       
       {children}

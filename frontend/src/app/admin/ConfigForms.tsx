@@ -1,10 +1,11 @@
 'use client'
 
 import { useState } from 'react'
-import { Plus, Tag, Palette, CheckCircle2, AlertCircle, CreditCard } from 'lucide-react'
+import { Plus, Tag, Palette, CheckCircle2, AlertCircle, CreditCard, Trash2, X } from 'lucide-react'
 import { addCategory, addColor, addMedioPago, updateMedioPago, deleteMedioPago, getMediosPago } from '@/services/adminService'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useEffect } from 'react'
+import { createPortal } from 'react-dom'
 
 export function ConfigForms() {
   const [activeTab, setActiveTab] = useState<'category' | 'color' | 'payment'>('category')
@@ -12,8 +13,11 @@ export function ConfigForms() {
   const [loading, setLoading] = useState(false)
   const [mediosPago, setMediosPago] = useState<any[]>([])
   const [editingMedio, setEditingMedio] = useState<any | null>(null)
+  const [deleteModal, setDeleteModal] = useState<any | null>(null)
+  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
+    setMounted(true)
     if (activeTab === 'payment') {
       loadMedios()
     }
@@ -149,12 +153,7 @@ export function ConfigForms() {
                           Editar
                         </button>
                         <button 
-                          onClick={async () => {
-                            if (confirm('¿Eliminar este medio de pago?')) {
-                              await deleteMedioPago(mp.id_medio_pago)
-                              loadMedios()
-                            }
-                          }}
+                          onClick={() => setDeleteModal(mp)}
                           className="px-4 py-2 rounded-lg bg-red-500/10 text-red-500 text-[8px] font-black uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all"
                         >
                           Eliminar
@@ -232,6 +231,45 @@ export function ConfigForms() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {mounted && deleteModal && createPortal(
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-[#0a0a0a] border border-white/10 rounded-[2rem] p-8 max-w-md w-full shadow-2xl relative overflow-hidden">
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-32 bg-red-500/20 blur-[50px] rounded-full pointer-events-none" />
+            <button onClick={() => setDeleteModal(null)} className="absolute top-6 right-6 text-zinc-500 hover:text-white transition-colors">
+              <X className="h-5 w-5" />
+            </button>
+            <div className="flex flex-col items-center text-center mt-4">
+              <div className="w-16 h-16 rounded-2xl bg-red-500/10 border border-red-500/20 flex items-center justify-center mb-6 text-red-500">
+                <Trash2 className="h-8 w-8" />
+              </div>
+              <h3 className="text-2xl font-serif text-white italic mb-2">Eliminar Medio de Pago</h3>
+              <p className="text-sm text-zinc-400 font-light mb-8 leading-relaxed">
+                ¿Estás seguro de que deseas eliminar <strong className="text-white font-black tracking-widest uppercase">{deleteModal.nombre}</strong>?
+              </p>
+              <div className="flex items-center gap-4 w-full">
+                <button onClick={() => setDeleteModal(null)} className="flex-1 py-4 px-6 rounded-xl border border-white/10 text-white text-[10px] font-black uppercase tracking-widest hover:bg-white/5 transition-all">
+                  Cancelar
+                </button>
+                <button 
+                  onClick={async () => {
+                    setLoading(true)
+                    await deleteMedioPago(deleteModal.id_medio_pago)
+                    await loadMedios()
+                    setDeleteModal(null)
+                    setLoading(false)
+                  }} 
+                  disabled={loading} 
+                  className="flex-1 py-4 px-6 rounded-xl bg-red-500 hover:bg-red-600 text-white text-[10px] font-black uppercase tracking-widest transition-all disabled:opacity-50 shadow-[0_0_20px_rgba(239,68,68,0.3)]"
+                >
+                  {loading ? 'Procesando...' : 'Confirmar'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
     </div>
   )
 }

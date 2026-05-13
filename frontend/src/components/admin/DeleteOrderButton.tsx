@@ -6,6 +6,8 @@ import { Trash2, Loader2, AlertTriangle, X } from 'lucide-react'
 import { deleteOrder } from '@/services/adminService'
 import { useRouter } from 'next/navigation'
 
+import { useNotificationStore } from '@/store/notificationStore'
+
 export function DeleteOrderButton({ orderId }: { orderId: string }) {
   const [loading, setLoading] = useState(false)
   const [showModal, setShowModal] = useState(false)
@@ -21,13 +23,14 @@ export function DeleteOrderButton({ orderId }: { orderId: string }) {
     try {
       const res = await deleteOrder(orderId)
       if (res && !res.success) {
-        alert(res.error)
+        useNotificationStore.getState().addNotification(res.error, 'error')
       } else {
         setShowModal(false)
         router.refresh() // Obligamos al navegador a recargar los datos
+        useNotificationStore.getState().addNotification('Orden eliminada correctamente', 'success')
       }
     } catch (e: any) {
-      alert(e.message)
+      useNotificationStore.getState().addNotification(e.message, 'error')
       setShowModal(false)
     } finally {
       setLoading(false)

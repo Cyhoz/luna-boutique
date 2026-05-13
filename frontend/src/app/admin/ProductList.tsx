@@ -1,14 +1,22 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Pencil, X, Save, Trash2, Box, Tag, Palette, Ruler } from 'lucide-react'
 import { updateProduct, deleteProduct, updateVariantStock } from '@/services/adminService'
 import Image from 'next/image'
+import { createPortal } from 'react-dom'
+import { useNotificationStore } from '@/store/notificationStore'
 
 export function ProductList({ products }: { products: any[] }) {
   const [editingId, setEditingId] = useState<string | null>(null)
   const [isPending, setIsPending] = useState(false)
   const [stockUpdates, setStockUpdates] = useState<Record<string, number>>({})
+  const [deleteModal, setDeleteModal] = useState<{ id: string, name: string } | null>(null)
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const handleEdit = (p: any) => {
     setEditingId(p.id_producto)
@@ -21,8 +29,9 @@ export function ProductList({ products }: { products: any[] }) {
     const result = await updateProduct(formData)
     if (result.success) {
       setEditingId(null)
+      useNotificationStore.getState().addNotification("Producto actualizado con éxito", "success")
     } else {
-      alert("Error al actualizar: " + result.error)
+      useNotificationStore.getState().addNotification("Error al actualizar: " + result.error, "error")
     }
     setIsPending(false)
   }
@@ -39,10 +48,25 @@ export function ProductList({ products }: { products: any[] }) {
         delete next[variantId]
         return next
       })
+      useNotificationStore.getState().addNotification("Stock ajustado correctamente", "success")
     } else {
-      alert("Error: " + result.error)
+      useNotificationStore.getState().addNotification("Error: " + result.error, "error")
     }
     setIsPending(false)
+  }
+
+  const confirmDelete = async () => {
+    if (!deleteModal) return
+    setIsPending(true)
+    const result = await deleteProduct(deleteModal.id)
+    setIsPending(false)
+    setDeleteModal(null)
+    
+    if (result.success) {
+      useNotificationStore.getState().addNotification("Producto eliminado de la galería", "success")
+    } else {
+      useNotificationStore.getState().addNotification("Error al eliminar: " + result.error, "error")
+    }
   }
 
   return (
@@ -98,9 +122,7 @@ export function ProductList({ products }: { products: any[] }) {
                   <div className="flex gap-2">
                     <button onClick={() => handleEdit(p)} className="text-[9px] font-black text-zinc-400 hover:text-white uppercase tracking-[0.2em] transition-all underline underline-offset-4">Editar</button>
                     <button 
-                      onClick={async () => {
-                        if (confirm(`¿Eliminar ${p.nombre}?`)) await deleteProduct(p.id_producto)
-                      }}
+                      onClick={() => setDeleteModal({ id: p.id_producto, name: p.nombre })}
                       className="text-[9px] font-black text-zinc-700 hover:text-red-500 uppercase tracking-[0.2em] transition-all"
                     >
                       Eliminar
@@ -160,6 +182,35 @@ export function ProductList({ products }: { products: any[] }) {
           )}
         </div>
       ))}
+
+      {mounted && deleteModal && createPortal(
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-[#0a0a0a] border border-white/10 rounded-[2rem] p-8 max-w-md w-full shadow-2xl relative overflow-hidden">
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-32 bg-red-500/20 blur-[50px] rounded-full pointer-events-none" />
+            <button onClick={() => setDeleteModal(null)} className="absolute top-6 right-6 text-zinc-500 hover:text-white transition-colors">
+              <X className="h-5 w-5" />
+            </button>
+            <div className="flex flex-col items-center text-center mt-4">
+              <div className="w-16 h-16 rounded-2xl bg-red-500/10 border border-red-500/20 flex items-center justify-center mb-6 text-red-500">
+                <Trash2 className="h-8 w-8" />
+              </div>
+              <h3 className="text-2xl font-serif text-white italic mb-2">Eliminar Pieza</h3>
+              <p className="text-sm text-zinc-400 font-light mb-8 leading-relaxed">
+                ¿Estás seguro de que deseas obliterar <strong className="text-white font-black tracking-widest uppercase">{deleteModal.name}</strong> de la galería? Esta acción es irreversible.
+              </p>
+              <div className="flex items-center gap-4 w-full">
+                <button onClick={() => setDeleteModal(null)} className="flex-1 py-4 px-6 rounded-xl border border-white/10 text-white text-[10px] font-black uppercase tracking-widest hover:bg-white/5 transition-all">
+                  Cancelar
+                </button>
+                <button onClick={confirmDelete} disabled={isPending} className="flex-1 py-4 px-6 rounded-xl bg-red-500 hover:bg-red-600 text-white text-[10px] font-black uppercase tracking-widest transition-all disabled:opacity-50 shadow-[0_0_20px_rgba(239,68,68,0.3)]">
+                  {isPending ? 'Procesando...' : 'Confirmar'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
     </div>
   )
 }
