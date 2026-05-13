@@ -30,13 +30,19 @@ export default async function HomePage() {
       || p.imagen_producto?.[0]?.url_imagen 
       || 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=1000';
 
-    const firstVariant = p.variante_producto?.[0] || { id_variante: '', precio: 0, precio_descuento: 0, inventario: { stock_actual: 0 } }
+    const firstVariant = p.variante_producto?.[0] || { id_variante: '', precio: 0, precio_descuento: 0 }
     const finalPrice = firstVariant.precio_descuento && firstVariant.precio_descuento > 0 
       ? firstVariant.precio_descuento 
       : firstVariant.precio
 
+    // Calculamos el stock total sumando todas las variantes
+    const totalStock = p.variante_producto?.reduce((acc: number, v: any) => {
+      const vStock = Array.isArray(v.inventario) ? (v.inventario[0]?.stock_actual || 0) : (v.inventario?.stock_actual || 0)
+      return acc + vStock
+    }, 0) || 0
+
     return {
-      id: firstVariant.id_variante, // Cambiado de p.id_producto a id_variante
+      id: firstVariant.id_variante,
       productId: p.id_producto,
       name: p.nombre,
       price: finalPrice,
@@ -45,9 +51,7 @@ export default async function HomePage() {
       category: (p.categoria as any)?.nombre || 'EXCLUSIVO',
       isNew: true,
       isOnSale: firstVariant.precio_descuento && firstVariant.precio_descuento > 0,
-      stock: Array.isArray((firstVariant as any).inventario) 
-        ? (firstVariant as any).inventario[0]?.stock_actual 
-        : (firstVariant as any).inventario?.stock_actual || 0
+      stock: totalStock
     }
   }) || []
 
