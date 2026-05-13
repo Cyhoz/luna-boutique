@@ -115,6 +115,11 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
     ? defaultVariant.precio_descuento 
     : defaultVariant.precio || 0
   const hasSale = defaultVariant.precio_descuento && defaultVariant.precio_descuento > 0
+  
+  const getStock = (v: any) => {
+    if (!v?.inventario) return 0
+    return Array.isArray(v.inventario) ? (v.inventario[0]?.stock_actual || 0) : (v.inventario.stock_actual || 0)
+  }
 
   return (
     <div className="flex flex-col min-h-screen lunar-gradient relative">
@@ -279,7 +284,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
                     originalPrice={v.precio}
                     category={(rp.categoria as any)?.nombre || 'COLECCIÓN'}
                     imageUrl={mainImg}
-                    stock={v.inventario?.stock_actual || 0}
+                    stock={getStock(v)}
                   />
                 )
               })

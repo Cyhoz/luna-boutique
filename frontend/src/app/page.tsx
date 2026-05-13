@@ -45,7 +45,9 @@ export default async function HomePage() {
       category: (p.categoria as any)?.nombre || 'EXCLUSIVO',
       isNew: true,
       isOnSale: firstVariant.precio_descuento && firstVariant.precio_descuento > 0,
-      stock: (firstVariant as any).inventario?.stock_actual || 0
+      stock: Array.isArray((firstVariant as any).inventario) 
+        ? (firstVariant as any).inventario[0]?.stock_actual 
+        : (firstVariant as any).inventario?.stock_actual || 0
     }
   }) || []
 

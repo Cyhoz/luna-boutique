@@ -28,7 +28,12 @@ export function AddToCartButton({ product, variants, sizes, colors }: AddToCartB
     (v) => v.talla === selectedSize && v.color?.nombre === selectedColor
   )
 
-  const stockActual = selectedVariant?.inventario?.stock_actual || 0
+  const getStock = (v: any) => {
+    if (!v?.inventario) return 0
+    return Array.isArray(v.inventario) ? (v.inventario[0]?.stock_actual || 0) : (v.inventario.stock_actual || 0)
+  }
+
+  const stockActual = getStock(selectedVariant)
   const isOutOfStock = stockActual <= 0
 
   const handleAddToCart = () => {
@@ -61,7 +66,7 @@ export function AddToCartButton({ product, variants, sizes, colors }: AddToCartB
           </div>
           <div className="flex flex-wrap gap-4">
             {sizes.map((size) => {
-              const isAvailable = variants.some(v => v.talla === size && (v.inventario?.stock_actual || 0) > 0)
+              const isAvailable = variants.some(v => v.talla === size && getStock(v) > 0)
               const isSelected = selectedSize === size
               return (
                 <button
