@@ -42,7 +42,7 @@ export default async function HomePage() {
       price: finalPrice,
       originalPrice: firstVariant.precio,
       imageUrl: mainImage,
-      category: p.categoria?.nombre || 'EXCLUSIVO',
+      category: (p.categoria as any)?.nombre || 'EXCLUSIVO',
       isNew: true,
       isOnSale: firstVariant.precio_descuento && firstVariant.precio_descuento > 0,
       stock: (firstVariant as any).inventario?.stock_actual || 0
