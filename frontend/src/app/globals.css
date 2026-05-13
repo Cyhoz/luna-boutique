@@ -1,0 +1,106 @@
+@import "tailwindcss";
+
+@theme {
+  --font-serif: "Playfair Display", serif;
+  --font-sans: "Montserrat", sans-serif;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  
+  --color-primary: #eab308; /* Oro */
+  --color-secondary: #db2777; /* Rosa Neón */
+  --color-accent: #3b0764; /* Púrpura Profundo */
+  
+  --color-muted: var(--muted);
+  --color-muted-foreground: #a1a1aa;
+  
+  --color-border: var(--border);
+}
+
+:root {
+  --background: #09090b; /* Zinc-950 por defecto */
+  --foreground: #f8fafc;
+  --muted: #18181b;
+  --border: #27272a;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4, .font-serif {
+  font-family: var(--font-serif), serif;
+}
+
+/* Glassmorphism Refinado */
+.glass {
+  background: rgba(9, 9, 11, 0.7);
+  backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+.glass-light {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Efectos Ethereal */
+.lunar-gradient {
+  background: radial-gradient(circle at top right, #3b0764 0%, #09090b 50%, #000000 100%);
+}
+
+.gold-glow {
+  box-shadow: 0 0 30px -10px rgba(234, 179, 8, 0.2);
+}
+
+.pink-glow {
+  filter: drop-shadow(0 0 12px rgba(219, 39, 119, 0.4));
+}
+
+.gold-text {
+  background: linear-gradient(135deg, #eab308 0%, #fef08a 50%, #eab308 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 600;
+}
+
+/* Animaciones */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes pulse-slow {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(1.05); }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 8s ease-in-out infinite;
+}
+
+/* Utilidades Premium */
+.border-gradient {
+  border: 1px solid transparent;
+  background: linear-gradient(var(--background), var(--background)) padding-box,
+              linear-gradient(135deg, rgba(234, 179, 8, 0.3), rgba(219, 39, 119, 0.3)) border-box;
+}
+
+.hover-lift {
+  transition: all 0.4s cubic-bezier(0.2, 1, 0.3, 1);
+}
+
+.hover-lift:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 20px 40px -20px rgba(0, 0, 0, 0.5);
+}
