@@ -101,10 +101,8 @@ export async function addProduct(formData: FormData) {
     
     revalidatePath('/admin')
     revalidatePath('/')
-    return { success: true }
   } catch (error: any) {
     console.error('Error adding product:', error)
-    return { success: false, error: error.message }
   }
 }
 
@@ -134,9 +132,8 @@ export async function addCategory(formData: FormData) {
 
     if (error) throw error
     revalidatePath('/admin')
-    return { success: true }
   } catch (error: any) {
-    return { success: false, error: error.message }
+    console.error('Error adding category:', error)
   }
 }
 
@@ -152,9 +149,8 @@ export async function addColor(formData: FormData) {
 
     if (error) throw error
     revalidatePath('/admin')
-    return { success: true }
   } catch (error: any) {
-    return { success: false, error: error.message }
+    console.error('Error adding color:', error)
   }
 }
 
