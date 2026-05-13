@@ -14,9 +14,7 @@ export async function deleteAddress(formData: FormData) {
 
   if (error) {
     console.error('Error al borrar dirección:', error)
-    return { success: false, error: error.message }
   }
 
   revalidatePath('/mi-cuenta')
-  return { success: true }
 }
