@@ -38,7 +38,8 @@ export default async function HomePage() {
 
     // Calculamos el stock total sumando todas las variantes
     const totalStock = p.variante_producto?.reduce((acc: number, v: any) => {
-      const vStock = Array.isArray(v.inventario) ? (v.inventario[0]?.stock_actual || 0) : (v.inventario?.stock_actual || 0)
+      const inv = v.inventario
+      const vStock = Array.isArray(inv) ? (inv[0]?.stock_actual || 0) : (inv?.stock_actual || 0)
       return acc + vStock
     }, 0) || 0
 

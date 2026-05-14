@@ -74,8 +74,11 @@ export default async function ColeccionPage({
       || 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=800';
 
     const firstVariant = p.variante_producto?.[0] || { id_variante: '', precio: 0, precio_descuento: 0 }
-    const totalStock = p.variante_producto?.reduce((acc: number, v: any) => 
-      acc + (v.inventario?.stock_actual || 0), 0) || 0;
+    const totalStock = p.variante_producto?.reduce((acc: number, v: any) => {
+      const inv = v.inventario
+      const vStock = Array.isArray(inv) ? (inv[0]?.stock_actual || 0) : (inv?.stock_actual || 0)
+      return acc + vStock
+    }, 0) || 0;
 
     return {
       id: firstVariant.id_variante, // Cambiado para enviar el UUID de la variante
