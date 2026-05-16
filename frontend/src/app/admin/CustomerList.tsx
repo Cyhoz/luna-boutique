@@ -26,7 +26,7 @@ export function CustomerList({ clientes }: { clientes: any[] }) {
           </thead>
           <tbody className="divide-y divide-white/5">
             {clientes.map((c) => (
-              <tr key={c.id_cliente} className="group hover:bg-white/[0.01] transition-all">
+              <tr key={c.id_usuario} className="group hover:bg-white/[0.01] transition-all">
                 <td className="px-10 py-8">
                   <div className="flex items-center gap-4">
                     <div className="w-10 h-10 glass rounded-full flex items-center justify-center text-xs font-serif gold-text border-white/10">
@@ -34,7 +34,7 @@ export function CustomerList({ clientes }: { clientes: any[] }) {
                     </div>
                     <div>
                       <p className="text-xs font-black text-white uppercase tracking-widest">{c.nombre}</p>
-                      <p className="text-[9px] text-zinc-600 uppercase font-bold tracking-widest">ID: {c.id_cliente.split('-')[0]}</p>
+                      <p className="text-[9px] text-zinc-600 uppercase font-bold tracking-widest">ID: {c.id_usuario.split('-')[0]}</p>
                     </div>
                   </div>
                 </td>

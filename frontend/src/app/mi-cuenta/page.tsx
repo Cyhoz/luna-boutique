@@ -18,21 +18,21 @@ export default async function AccountPage() {
   }
 
   const { data: profile } = await supabase
-    .from('cliente')
+    .from('usuario')
     .select('*')
-    .eq('id_cliente', user.id)
+    .eq('id_usuario', user.id)
     .single()
 
   const { data: addresses } = await supabase
     .from('direccion')
     .select('*')
-    .eq('id_cliente', user.id)
+    .eq('id_usuario', user.id)
     .order('es_principal', { ascending: false })
 
   const { data: orders } = await supabase
     .from('pedido')
     .select('*')
-    .eq('id_cliente', user.id)
+    .eq('id_usuario', user.id)
     .order('fecha_pedido', { ascending: false })
 
   const clientName = profile?.nombre || 'Usuario Estelar'

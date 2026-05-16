@@ -34,16 +34,16 @@ export async function processCheckout(
   const phone = formData.get('phone') as string || ''
 
   const { data: { user } } = await serverSupabase.auth.getUser()
-  const clienteId = user?.id || null
+  const usuarioId = user?.id || null
 
   // 2. Buscar si la dirección ya existe para evitar duplicados
   let direccionId = null;
 
-  if (clienteId) {
+  if (usuarioId) {
     const { data: existingDir } = await adminSupabase
       .from('direccion')
       .select('id_direccion')
-      .eq('id_cliente', clienteId)
+      .eq('id_usuario', usuarioId)
       .eq('direccion_linea1', address)
       .eq('ciudad', city)
       .maybeSingle()
@@ -58,7 +58,7 @@ export async function processCheckout(
     const { data: nuevaDireccion, error: dirError } = await adminSupabase
       .from('direccion')
       .insert({
-        id_cliente: clienteId,
+        id_usuario: usuarioId,
         alias: 'Dirección de Pedido',
         nombre_destinatario: `${firstName} ${lastName}`,
         direccion_linea1: address,
@@ -83,7 +83,7 @@ export async function processCheckout(
   const { data: order, error: orderError } = await adminSupabase
     .from('pedido')
     .insert({
-      id_cliente: clienteId,
+      id_usuario: usuarioId,
       id_direccion_envio: direccionId,
       total: total,
       estado: 'pendiente',

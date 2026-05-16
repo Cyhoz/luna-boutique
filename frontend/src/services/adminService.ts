@@ -11,9 +11,9 @@ async function checkAdmin() {
   if (!user) throw new Error('No autenticado')
 
   const { data: profile } = await supabase
-    .from('cliente')
+    .from('usuario')
     .select('role')
-    .eq('id_cliente', user.id)
+    .eq('id_usuario', user.id)
     .single()
 
   if (profile?.role !== 'admin') throw new Error('No autorizado')
@@ -321,7 +321,7 @@ export async function markAsShipped(orderId: string, formData: FormData) {
           motivo: `Despacho Pedido ORD-${orderId.split('-')[0]}`,
           referencia_id: orderId,
           referencia_tipo: 'pedido',
-          usuario_id: user.id
+          id_usuario: user.id
         })
       }
     }
@@ -419,7 +419,7 @@ export async function updateVariantStock(variantId: string, stock: number, motiv
       tipo_movimiento: 'ajuste',
       cantidad: stock,
       motivo: motivo,
-      usuario_id: user.id
+      id_usuario: user.id
     })
 
     if (moveError) throw moveError
@@ -490,9 +490,9 @@ export async function deleteOrder(orderId: string) {
 
     // Verificar si es admin
     const { data: profile } = await supabase
-      .from('cliente')
+      .from('usuario')
       .select('role')
-      .eq('id_cliente', user.id)
+      .eq('id_usuario', user.id)
       .single()
 
     const isAdmin = profile?.role === 'admin'
@@ -501,11 +501,11 @@ export async function deleteOrder(orderId: string) {
     if (!isAdmin) {
       const { data: order } = await adminSupabase
         .from('pedido')
-        .select('id_cliente')
+        .select('id_usuario')
         .eq('id_pedido', orderId)
         .single()
         
-      if (order?.id_cliente !== user.id) {
+      if (order?.id_usuario !== user.id) {
         throw new Error('No autorizado para eliminar este pedido')
       }
     }
@@ -534,9 +534,9 @@ export async function deleteMultipleOrders(formData: FormData) {
     if (!user) throw new Error('No autenticado')
 
     const { data: profile } = await supabase
-      .from('cliente')
+      .from('usuario')
       .select('role')
-      .eq('id_cliente', user.id)
+      .eq('id_usuario', user.id)
       .single()
 
     const isAdmin = profile?.role === 'admin'
@@ -551,11 +551,11 @@ export async function deleteMultipleOrders(formData: FormData) {
       // Verificar propiedad de cada pedido
       const { data: orders } = await adminSupabase
         .from('pedido')
-        .select('id_pedido, id_cliente')
+        .select('id_pedido, id_usuario')
         .in('id_pedido', orderIds)
         
       for (const order of orders || []) {
-        if (order.id_cliente !== user.id) {
+        if (order.id_usuario !== user.id) {
           throw new Error('No autorizado para eliminar uno o más pedidos seleccionados')
         }
       }

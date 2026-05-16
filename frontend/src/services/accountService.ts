@@ -25,11 +25,11 @@ export async function addAddress(formData: FormData) {
       await supabase
         .from('direccion')
         .update({ es_principal: false })
-        .eq('id_cliente', user.id)
+        .eq('id_usuario', user.id)
     }
 
     const { error } = await supabase.from('direccion').insert({
-      id_cliente: user.id,
+      id_usuario: user.id,
       alias,
       nombre_destinatario,
       direccion_linea1,
@@ -74,9 +74,9 @@ export async function updateProfile(formData: FormData) {
     const telefono = formData.get('telefono') as string
 
     const { error } = await supabase
-      .from('cliente')
+      .from('usuario')
       .update({ nombre, telefono })
-      .eq('id_cliente', user.id)
+      .eq('id_usuario', user.id)
 
     if (error) throw error
 

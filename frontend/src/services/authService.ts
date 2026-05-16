@@ -35,8 +35,8 @@ export async function signup(formData: FormData) {
     password: formData.get('password') as string,
     options: {
       data: {
-        full_name: formData.get('fullName') as string,
-        phone: formData.get('telefono') as string,
+        fullName: formData.get('fullName') as string,
+        telefono: formData.get('telefono') as string,
       }
     }
   }
@@ -44,7 +44,8 @@ export async function signup(formData: FormData) {
   const { error } = await supabase.auth.signUp(data)
 
   if (error) {
-    redirect('/registro?error=Error+creando+cuenta')
+    console.error('Error en signup:', error)
+    redirect(`/registro?error=${encodeURIComponent(error.message)}`)
   }
 
   revalidatePath('/', 'layout')

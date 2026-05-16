@@ -78,7 +78,7 @@ export default async function AdminPage({
     .from('pedido')
     .select(`
       id_pedido, total, estado, fecha_pedido,
-      cliente (nombre, email),
+      usuario (nombre, email),
       envio (id_envio, paqueteria, numero_guia, estado),
       detalle_pedido (
         id_detalle_pedido,
@@ -97,7 +97,7 @@ export default async function AdminPage({
 
   // Obtenemos lista de clientes
   const { data: clientes } = await supabase
-    .from('cliente')
+    .from('usuario')
     .select('*')
     .order('fecha_registro', { ascending: false })
 
@@ -345,7 +345,7 @@ export default async function AdminPage({
                             <div className="flex items-center gap-3">
                               <MapPin className="h-3 w-3 text-zinc-600" />
                               <div>
-                                <p className="text-[10px] font-black text-zinc-300 uppercase tracking-widest">{order.cliente?.nombre || 'ANÓNIMO'}</p>
+                                <p className="text-[10px] font-black text-zinc-300 uppercase tracking-widest">{order.usuario?.nombre || 'ANÓNIMO'}</p>
                                 <p className="text-[9px] text-zinc-600 mt-1 uppercase">LISTO PARA ENVIAR</p>
                               </div>
                             </div>
@@ -374,7 +374,7 @@ export default async function AdminPage({
                             <p className="text-xs font-medium text-zinc-500 uppercase tracking-widest">ORD-{order.id_pedido.split('-')[0]}</p>
                           </td>
                           <td className="px-10 py-8">
-                            <p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">{order.cliente?.nombre}</p>
+                            <p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">{order.usuario?.nombre}</p>
                             <p className="text-[8px] text-zinc-700 mt-1">{order.envio?.[0]?.paqueteria}: {order.envio?.[0]?.numero_guia}</p>
                           </td>
                           <td className="px-10 py-8">
@@ -398,7 +398,7 @@ export default async function AdminPage({
                             <input type="checkbox" name="orderIds" value={order.id_pedido} className="accent-red-500 w-4 h-4 rounded cursor-pointer" />
                           </td>
                           <td className="px-10 py-8 text-zinc-600 text-[10px]">Abandonado/Pendiente</td>
-                          <td className="px-10 py-8 text-zinc-600 text-[10px]">{order.cliente?.email}</td>
+                          <td className="px-10 py-8 text-zinc-600 text-[10px]">{order.usuario?.email}</td>
                           <td className="px-10 py-8">
                              <span className="text-[8px] border border-zinc-800 text-zinc-700 px-3 py-1 rounded-full uppercase tracking-tighter">Expirado</span>
                           </td>

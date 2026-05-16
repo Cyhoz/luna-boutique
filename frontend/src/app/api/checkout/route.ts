@@ -24,7 +24,7 @@ export async function POST(request: Request) {
     console.log('Buscando orden en Supabase...')
     const { data: order, error: orderError } = await adminSupabase
       .from('pedido')
-      .select('total, id_cliente')
+      .select('total, id_usuario')
       .eq('id_pedido', orderId)
       .single()
 

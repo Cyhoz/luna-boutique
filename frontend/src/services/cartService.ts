@@ -10,7 +10,7 @@ async function getOrCreateCart(userId: string, supabase: any) {
   const { data: cart, error } = await supabase
     .from('carrito')
     .select('id_carrito')
-    .eq('id_cliente', userId)
+    .eq('id_usuario', userId)
     .eq('estado', 'activo')
     .maybeSingle()
 
@@ -18,7 +18,7 @@ async function getOrCreateCart(userId: string, supabase: any) {
 
   const { data: newCart, error: createError } = await supabase
     .from('carrito')
-    .insert({ id_cliente: userId, estado: 'activo' })
+    .insert({ id_usuario: userId, estado: 'activo' })
     .select()
     .single()
 
@@ -74,7 +74,7 @@ export async function loadCartFromDB(userId: string) {
   const { data: cart } = await supabase
     .from('carrito')
     .select('id_carrito')
-    .eq('id_cliente', userId)
+    .eq('id_usuario', userId)
     .eq('estado', 'activo')
     .maybeSingle()
 

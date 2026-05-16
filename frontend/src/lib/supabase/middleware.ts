@@ -38,9 +38,9 @@ export async function updateSession(request: NextRequest) {
     
     // Está logueado, verificamos su rol en la tabla profiles
     const { data: profile } = await supabase
-      .from('cliente')
+      .from('usuario')
       .select('role')
-      .eq('id_cliente', user.id)
+      .eq('id_usuario', user.id)
       .single()
 
     if (!profile || profile.role !== 'admin') {
