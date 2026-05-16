@@ -122,15 +122,13 @@ export async function addProduct(formData: FormData) {
 }
 
 export async function getCategories() {
-  const supabase = await createClient()
-  const { data, error } = await supabase.from('categoria').select('*').eq('estado', 'activo')
+  const { data, error } = await adminSupabase.from('categoria').select('*').eq('estado', 'activo')
   if (error) return []
   return data
 }
 
 export async function getColors() {
-  const supabase = await createClient()
-  const { data, error } = await supabase.from('color').select('*')
+  const { data, error } = await adminSupabase.from('color').select('*')
   if (error) return []
   return data
 }

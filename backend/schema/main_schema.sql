@@ -547,6 +547,25 @@ CREATE TRIGGER trg_actualizar_stock
   EXECUTE FUNCTION public.actualizar_stock_inventario();
 
 
+-- -----------------------------------------------------------------------------
+-- 9.4  vista_alertas_stock
+--      Vista para el Panel Admin que muestra productos con stock bajo.
+-- -----------------------------------------------------------------------------
+CREATE OR REPLACE VIEW vista_alertas_stock AS
+SELECT 
+    p.nombre AS producto_nombre,
+    v.talla,
+    c.nombre AS color_nombre,
+    v.sku,
+    i.stock_actual,
+    i.stock_minimo
+FROM producto p
+JOIN variante_producto v ON p.id_producto = v.id_producto
+LEFT JOIN color c ON v.id_color = c.id_color
+JOIN inventario i ON v.id_variante = i.id_variante
+WHERE i.stock_actual <= i.stock_minimo;
+
+
 -- ===========================================================================
 -- 10. GUÍA PARA EL FRONTEND (leer antes de tocar el código)
 -- ===========================================================================
