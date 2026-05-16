@@ -147,8 +147,10 @@ export async function addCategory(formData: FormData) {
 
     if (error) throw error
     revalidatePath('/admin')
+    return { success: true }
   } catch (error: any) {
     console.error('Error adding category:', error)
+    return { success: false, error: error.message }
   }
 }
 
@@ -164,8 +166,10 @@ export async function addColor(formData: FormData) {
 
     if (error) throw error
     revalidatePath('/admin')
+    return { success: true }
   } catch (error: any) {
     console.error('Error adding color:', error)
+    return { success: false, error: error.message }
   }
 }
 

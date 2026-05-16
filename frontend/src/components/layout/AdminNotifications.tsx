@@ -23,9 +23,9 @@ export function AdminNotifications() {
       if (!user) return
 
       const { data: profile } = await supabase
-        .from('cliente')
+        .from('usuario')
         .select('role')
-        .eq('id_cliente', user.id)
+        .eq('id_usuario', user.id)
         .single()
       
       if (profile?.role !== 'admin') return

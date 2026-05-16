@@ -28,9 +28,9 @@ export function Navbar() {
       setUser(user)
       if (user) {
         const { data: profile } = await supabase
-          .from('cliente')
+          .from('usuario')
           .select('role')
-          .eq('id_cliente', user.id)
+          .eq('id_usuario', user.id)
           .single()
         
         setIsAdmin(profile?.role === 'admin')
